@@ -1,0 +1,480 @@
+.timer-screen {
+  position: relative;
+  height: 100%;
+}
+
+.timer-screen .screen-title {
+  color: var(--phase-color);
+  transition: color 0.3s ease;
+  margin: 4px 0 20px;
+}
+
+.timer-layout {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 32px;
+  height: 100%;
+  align-items: stretch;
+}
+
+.timer-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.timer-focus-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.timer-screen-focus .timer-layout {
+  justify-content: center;
+}
+
+.timer-screen-focus .timer-main {
+  justify-content: center;
+}
+
+.timer-screen-focus .screen-title {
+  display: none;
+}
+
+.timer-screen-dial {
+  margin: -24px -20px -20px;
+  padding: 24px 20px 20px;
+  overflow: hidden;
+}
+
+.timer-screen-dial.timer-screen-focus {
+  margin: 0;
+}
+
+.timer-dial-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7) saturate(1.05);
+}
+
+.timer-dial-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.6) 85%);
+  pointer-events: none;
+}
+
+.timer-screen-dial .screen-title,
+.timer-screen-dial .timer-ring-sublabel {
+  color: #fff;
+}
+
+.timer-screen-dial .task-search-bar input {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+.timer-screen-dial .task-search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.timer-screen-dial .icon-btn,
+.timer-screen-dial .quick-action {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.timer-screen-dial .icon-btn:hover,
+.timer-screen-dial .quick-action:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.timer-screen-dial .sidebar-card {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.timer-screen-dial .sidebar-card-label,
+.timer-screen-dial .sidebar-empty {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.timer-screen-dial .sidebar-card-value,
+.timer-screen-dial .sidebar-task-list {
+  color: #fff;
+}
+
+.timer-ring {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 24px;
+}
+
+.timer-ring-content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.timer-ring-time {
+  font-size: 52px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.timer-ring-sublabel {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timer-dial {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px 0 24px;
+}
+
+.timer-dial-time {
+  position: absolute;
+  font-size: 44px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.flip-clock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 28px;
+}
+
+.flip-clock-colon {
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding-bottom: 6px;
+}
+
+.flip-unit {
+  perspective: 400px;
+  width: 84px;
+  height: 108px;
+}
+
+.flip-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease-in-out;
+  border-radius: 10px;
+}
+
+.flip-card.flipping {
+  transform: rotateX(-180deg);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: #1c1c1c;
+  color: #eaeaea;
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+}
+
+.flip-face::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.flip-face-back {
+  transform: rotateX(180deg);
+}
+
+.session-dots {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.session-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background 0.3s ease;
+}
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-height: 56px;
+}
+
+.timer-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: 999px;
+  border: none;
+  background: var(--phase-color);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.1s ease;
+}
+
+.timer-pill-btn:active {
+  transform: scale(0.97);
+}
+
+.timer-pill-btn-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Task search bar */
+
+.task-search-bar {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 18px;
+}
+
+.task-search-bar input {
+  width: 100%;
+  padding: 10px 34px 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  text-align: center;
+}
+
+.task-search-bar input:disabled {
+  opacity: 0.6;
+}
+
+.task-search-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.task-search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  text-align: left;
+}
+
+.task-search-dropdown li button {
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.task-search-dropdown li button:hover {
+  background: var(--surface-hover);
+}
+
+.task-search-empty {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Quick actions row */
+
+.quick-actions-row {
+  display: flex;
+  gap: 28px;
+}
+
+.quick-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.quick-action svg {
+  width: 20px;
+  height: 20px;
+}
+
+.quick-action:hover,
+.quick-action.active {
+  color: var(--work);
+}
+
+/* Sidebar */
+
+.timer-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 4px 24px 0;
+  overflow-y: auto;
+}
+
+.sidebar-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-card-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.sidebar-card-value {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--work);
+}
+
+.sidebar-empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.sidebar-task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sidebar-task-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.sidebar-task-checkbox {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Records timeline */
+
+.records-timeline-track {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-hover);
+  overflow: hidden;
+}
+
+.records-timeline-mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 2px;
+  background: var(--work);
+  border-radius: 999px;
+}
+
+.records-timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--text-muted);
+}

@@ -1,0 +1,45 @@
+import { useEffect, useState } from 'react'
+
+const FLIP_DURATION_MS = 400
+
+function FlipUnit({ value }: { value: string }) {
+  const [current, setCurrent] = useState(value)
+  const [previous, setPrevious] = useState(value)
+  const [flipping, setFlipping] = useState(false)
+
+  useEffect(() => {
+    if (value === current) return
+    setPrevious(current)
+    setCurrent(value)
+    setFlipping(true)
+    const timeout = setTimeout(() => setFlipping(false), FLIP_DURATION_MS)
+    return () => clearTimeout(timeout)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value])
+
+  return (
+    <div className="flip-unit">
+      <div className={`flip-card${flipping ? ' flipping' : ''}`}>
+        <div className="flip-face flip-face-front">{flipping ? previous : current}</div>
+        <div className="flip-face flip-face-back">{current}</div>
+      </div>
+    </div>
+  )
+}
+
+interface TimerFlipClockProps {
+  remainingSeconds: number
+}
+
+export function TimerFlipClock({ remainingSeconds }: TimerFlipClockProps) {
+  const minutes = Math.floor(remainingSeconds / 60)
+  const seconds = remainingSeconds % 60
+
+  return (
+    <div className="flip-clock">
+      <FlipUnit value={String(minutes).padStart(2, '0')} />
+      <span className="flip-clock-colon">:</span>
+      <FlipUnit value={String(seconds).padStart(2, '0')} />
+    </div>
+  )
+}
