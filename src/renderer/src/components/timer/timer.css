@@ -35,6 +35,13 @@
   overflow: hidden;
 }
 
+.timer-minimize-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+}
+
 .timer-dial-bg {
   position: absolute;
   inset: 0;

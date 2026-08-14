@@ -14,6 +14,8 @@ import { TaskSearchBar } from './TaskSearchBar'
 import { QuickActionsRow } from './QuickActionsRow'
 import { TimerSidebar } from './TimerSidebar'
 import { TimerModeDialog } from './TimerModeDialog'
+import { IconButton } from '../shared/IconButton'
+import { CollapseIcon } from '../shared/icons'
 import './timer.css'
 
 const PHASE_LABEL: Record<string, string> = {
@@ -28,7 +30,11 @@ function formatTime(totalSeconds: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
-export function TimerScreen() {
+interface TimerScreenProps {
+  onMinimize: () => void
+}
+
+export function TimerScreen({ onMinimize }: TimerScreenProps) {
   const state = useTimerStore((s) => s.state)
   const selectedTaskId = useTimerStore((s) => s.selectedTaskId)
   const subscribe = useTimerStore((s) => s.subscribe)
@@ -93,6 +99,10 @@ export function TimerScreen() {
         style={{ backgroundImage: `url(${DIAL_BACKGROUND_URLS[settings.dialBackground]})` }}
       />
       <div className="timer-dial-vignette" />
+
+      <IconButton label="Minimize" className="timer-minimize-btn" onClick={onMinimize}>
+        <CollapseIcon />
+      </IconButton>
 
       <div className="timer-layout">
         <div className="timer-main">

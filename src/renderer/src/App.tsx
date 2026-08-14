@@ -2,40 +2,58 @@ import { useState } from 'react'
 import { TimerScreen } from './components/timer/TimerScreen'
 import { TodoScreen } from './components/todo/TodoScreen'
 import { SettingsScreen } from './components/settings/SettingsScreen'
-import { TimerIcon, ChecklistIcon, SettingsIcon } from './components/shared/icons'
+import { MiniTimerBar } from './components/timer/MiniTimerBar'
+import { ChecklistIcon, SettingsIcon } from './components/shared/icons'
 
 type Screen = 'timer' | 'todo' | 'settings'
 
-const SCREENS: { key: Screen; label: string; Icon: typeof TimerIcon }[] = [
-  { key: 'timer', label: 'Timer', Icon: TimerIcon },
+const RAIL_ITEMS: { key: Screen; label: string; Icon: typeof ChecklistIcon }[] = [
   { key: 'todo', label: 'Tasks', Icon: ChecklistIcon },
   { key: 'settings', label: 'Settings', Icon: SettingsIcon }
 ]
 
 export function App() {
   const [screen, setScreen] = useState<Screen>('timer')
+  const [timerMinimized, setTimerMinimized] = useState(false)
+
+  const showingFullTimer = screen === 'timer' && !timerMinimized
+  const showRail = !showingFullTimer
+
+  const minimizeTimer = () => {
+    setTimerMinimized(true)
+    if (screen === 'timer') setScreen('todo')
+  }
+
+  const restoreTimer = () => {
+    setTimerMinimized(false)
+    setScreen('timer')
+  }
 
   return (
     <div className="app-shell">
-      <nav className="app-rail">
-        {SCREENS.map(({ key, label, Icon }) => (
-          <button
-            key={key}
-            className={`app-rail-item${screen === key ? ' active' : ''}`}
-            onClick={() => setScreen(key)}
-            title={label}
-          >
-            <Icon />
-            <span>{label}</span>
-          </button>
-        ))}
-      </nav>
+      {showRail && (
+        <nav className="app-rail">
+          {RAIL_ITEMS.map(({ key, label, Icon }) => (
+            <button
+              key={key}
+              className={`app-rail-item${screen === key ? ' active' : ''}`}
+              onClick={() => setScreen(key)}
+              title={label}
+            >
+              <Icon />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+      )}
 
       <div className="app-content">
-        {screen === 'timer' && <TimerScreen />}
+        {screen === 'timer' && <TimerScreen onMinimize={minimizeTimer} />}
         {screen === 'todo' && <TodoScreen />}
         {screen === 'settings' && <SettingsScreen />}
       </div>
+
+      {timerMinimized && <MiniTimerBar onExpand={restoreTimer} />}
     </div>
   )
 }
