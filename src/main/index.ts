@@ -1,12 +1,13 @@
 import { app, BrowserWindow } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
-import { createWindow } from './window'
+import { createMainWindow } from './windowManager'
 import { initDb } from './db'
 import { timerEngine } from './timerEngine'
 import { registerTaskHandlers } from './ipc/taskHandlers'
 import { registerSettingsHandlers } from './ipc/settingsHandlers'
 import { registerTimerHandlers } from './ipc/timerHandlers'
 import { registerSessionHandlers } from './ipc/sessionHandlers'
+import { registerWindowHandlers } from './ipc/windowHandlers'
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.pomodorotodo.app')
@@ -21,12 +22,13 @@ app.whenReady().then(async () => {
   registerTaskHandlers()
   registerSettingsHandlers()
   registerSessionHandlers()
+  registerTimerHandlers()
+  registerWindowHandlers()
 
-  const mainWindow = createWindow()
-  registerTimerHandlers(mainWindow)
+  createMainWindow()
 
   app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
   })
 })
 

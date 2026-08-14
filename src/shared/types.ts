@@ -35,7 +35,6 @@ export interface TimerState {
 
 export type SoundChoice = 'none' | 'tick' | 'rain' | 'white-noise'
 export type ChimeChoice = 'bell' | 'digital' | 'soft-bell'
-export type TimerStyle = 'ring' | 'dial' | 'flip'
 export type DialBackground = 'forest' | 'dusk' | 'ocean' | 'midnight'
 
 export interface Settings {
@@ -47,7 +46,6 @@ export interface Settings {
   chimeSound: ChimeChoice
   ambientVolume: number
   chimeVolume: number
-  timerStyle: TimerStyle
   dialBackground: DialBackground
 }
 
@@ -60,7 +58,6 @@ export const DEFAULT_SETTINGS: Settings = {
   chimeSound: 'bell',
   ambientVolume: 0.5,
   chimeVolume: 0.6,
-  timerStyle: 'ring',
   dialBackground: 'forest'
 }
 

@@ -1,13 +1,10 @@
-import { ipcMain, type BrowserWindow } from 'electron'
+import { ipcMain } from 'electron'
 import { timerEngine } from '../timerEngine'
+import { broadcast } from '../windowManager'
 
-export function registerTimerHandlers(win: BrowserWindow): void {
-  timerEngine.onTick((state) => {
-    if (!win.isDestroyed()) win.webContents.send('timer:tick', state)
-  })
-  timerEngine.onSessionComplete((event) => {
-    if (!win.isDestroyed()) win.webContents.send('timer:sessionComplete', event)
-  })
+export function registerTimerHandlers(): void {
+  timerEngine.onTick((state) => broadcast('timer:tick', state))
+  timerEngine.onSessionComplete((event) => broadcast('timer:sessionComplete', event))
 
   ipcMain.handle('timer:getState', () => timerEngine.getState())
   ipcMain.handle('timer:start', (_event, taskId: string | null) => timerEngine.start(taskId))

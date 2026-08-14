@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import './flipClock.css'
 
 const FLIP_DURATION_MS = 400
 
@@ -51,7 +52,6 @@ export function TimerFlipClock({ remainingSeconds }: TimerFlipClockProps) {
   return (
     <div className="flip-clock">
       <FlipUnit value={String(minutes).padStart(2, '0')} />
-      <span className="flip-clock-colon">:</span>
       <FlipUnit value={String(seconds).padStart(2, '0')} />
     </div>
   )

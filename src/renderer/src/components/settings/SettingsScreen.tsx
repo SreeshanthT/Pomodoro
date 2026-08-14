@@ -17,12 +17,6 @@ const CHIME_OPTIONS: { value: Settings['chimeSound']; label: string }[] = [
   { value: 'soft-bell', label: 'Soft bell' }
 ]
 
-const TIMER_STYLE_OPTIONS: { value: Settings['timerStyle']; label: string }[] = [
-  { value: 'ring', label: 'Ring' },
-  { value: 'dial', label: 'Dial' },
-  { value: 'flip', label: 'Flip' }
-]
-
 const DIAL_BACKGROUND_OPTIONS = Object.keys(DIAL_BACKGROUND_URLS) as DialBackground[]
 
 export function SettingsScreen() {
@@ -52,37 +46,23 @@ export function SettingsScreen() {
       <h1 className="screen-title">Settings</h1>
 
       <section className="settings-section">
-        <h2>Timer style</h2>
+        <h2>Timer background</h2>
 
-        <div className="settings-style-tabs">
-          {TIMER_STYLE_OPTIONS.map((o) => (
-            <button
-              key={o.value}
-              className={`settings-style-tab${draft.timerStyle === o.value ? ' active' : ''}`}
-              onClick={() => patch({ timerStyle: o.value })}
-            >
-              {o.label}
-            </button>
-          ))}
-        </div>
-
-        {draft.timerStyle === 'dial' && (
-          <div className="settings-bg-row">
-            <span className="settings-bg-label">Background</span>
-            <div className="settings-bg-swatches">
-              {DIAL_BACKGROUND_OPTIONS.map((bg) => (
-                <button
-                  key={bg}
-                  className={`settings-bg-swatch${draft.dialBackground === bg ? ' active' : ''}`}
-                  style={{ backgroundImage: `url(${DIAL_BACKGROUND_URLS[bg]})` }}
-                  onClick={() => patch({ dialBackground: bg })}
-                  aria-label={DIAL_BACKGROUND_LABELS[bg]}
-                  title={DIAL_BACKGROUND_LABELS[bg]}
-                />
-              ))}
-            </div>
+        <div className="settings-bg-row">
+          <span className="settings-bg-label">Dial background</span>
+          <div className="settings-bg-swatches">
+            {DIAL_BACKGROUND_OPTIONS.map((bg) => (
+              <button
+                key={bg}
+                className={`settings-bg-swatch${draft.dialBackground === bg ? ' active' : ''}`}
+                style={{ backgroundImage: `url(${DIAL_BACKGROUND_URLS[bg]})` }}
+                onClick={() => patch({ dialBackground: bg })}
+                aria-label={DIAL_BACKGROUND_LABELS[bg]}
+                title={DIAL_BACKGROUND_LABELS[bg]}
+              />
+            ))}
           </div>
-        )}
+        </div>
       </section>
 
       <section className="settings-section">

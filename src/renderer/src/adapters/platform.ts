@@ -27,6 +27,10 @@ export interface PlatformApi {
   sessions: {
     getAll(): Promise<FocusSession[]>
   }
+  windows: {
+    openFocus(): Promise<void>
+    openMini(): Promise<void>
+  }
   timer: {
     getState(): Promise<TimerState>
     start(taskId: string | null): Promise<void>

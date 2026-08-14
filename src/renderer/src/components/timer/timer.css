@@ -29,33 +29,10 @@
   padding: 24px 0;
 }
 
-.timer-focus-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-}
-
-.timer-screen-focus .timer-layout {
-  justify-content: center;
-}
-
-.timer-screen-focus .timer-main {
-  justify-content: center;
-}
-
-.timer-screen-focus .screen-title {
-  display: none;
-}
-
 .timer-screen-dial {
   margin: -24px -20px -20px;
   padding: 24px 20px 20px;
   overflow: hidden;
-}
-
-.timer-screen-dial.timer-screen-focus {
-  margin: 0;
 }
 
 .timer-dial-bg {
@@ -162,118 +139,6 @@
   letter-spacing: -0.02em;
   color: #fff;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
-}
-
-.flip-clock {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 16px 0 28px;
-}
-
-.flip-clock-colon {
-  font-size: 40px;
-  font-weight: 600;
-  color: var(--text-muted);
-  padding-bottom: 6px;
-}
-
-.flip-unit {
-  position: relative;
-  perspective: 300px;
-  width: 84px;
-  height: 108px;
-  box-shadow: var(--shadow-md);
-  border-radius: 10px;
-}
-
-/* Each digit unit is two half-height clipped panels; the inner glyph is a
-   full-unit-height box shifted up/down so only its top or bottom half shows
-   through — the standard split-flap clipping trick. */
-.flip-half {
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  overflow: hidden;
-  background: #1c1c1c;
-}
-
-.flip-half-top {
-  top: 0;
-  border-radius: 10px 10px 0 0;
-  box-shadow: inset 0 -1px 3px rgba(0, 0, 0, 0.45);
-}
-
-.flip-half-bottom {
-  bottom: 0;
-  border-radius: 0 0 10px 10px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.45);
-}
-
-.flip-digit {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 108px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 56px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #eaeaea;
-}
-
-.flip-half-bottom .flip-digit {
-  top: -54px;
-}
-
-/* Animated leaves: only rendered while a digit is mid-flip, layered exactly
-   over their static counterpart. The top leaf hinges at its bottom edge and
-   falls away; the bottom leaf hinges at its top edge and drops into place
-   once the top leaf has finished falling. */
-.flip-leaf-top,
-.flip-leaf-bottom {
-  z-index: 2;
-  backface-visibility: hidden;
-}
-
-.flip-leaf-top {
-  transform-origin: bottom;
-  /* Sharp "ease-in-quart" style acceleration — mimics gravity pulling the leaf down fast. */
-  animation: flipTopFall 180ms cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
-}
-
-.flip-leaf-bottom {
-  transform-origin: top;
-  /* "easeOutBack" — overshoots slightly past flat before settling, reading as a mechanical clack. */
-  animation: flipBottomDrop 220ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  animation-delay: 180ms;
-  animation-fill-mode: both;
-}
-
-@keyframes flipTopFall {
-  from {
-    transform: rotateX(0deg);
-    filter: brightness(1);
-  }
-  to {
-    transform: rotateX(-90deg);
-    filter: brightness(0.55);
-  }
-}
-
-@keyframes flipBottomDrop {
-  from {
-    transform: rotateX(90deg);
-    filter: brightness(0.5);
-  }
-  to {
-    transform: rotateX(0deg);
-    filter: brightness(1);
-  }
 }
 
 .session-dots {

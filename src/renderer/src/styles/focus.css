@@ -1,0 +1,89 @@
+html,
+body {
+  background: #000;
+}
+
+.focus-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #f2f2f2;
+}
+
+.focus-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  -webkit-app-region: drag;
+}
+
+.focus-phase-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--phase-color);
+}
+
+.focus-titlebar-actions {
+  display: flex;
+  gap: 6px;
+  -webkit-app-region: no-drag;
+}
+
+.focus-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.focus-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.focus-icon-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.focus-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+
+.focus-play-pause {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  border: none;
+  background: #f2f2f2;
+  color: #1a1a1a;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.focus-play-pause:active {
+  transform: scale(0.95);
+}
+
+.focus-play-pause svg {
+  width: 22px;
+  height: 22px;
+}

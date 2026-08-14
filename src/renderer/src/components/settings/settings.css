@@ -76,34 +76,6 @@
   max-width: 140px;
 }
 
-.settings-style-tabs {
-  display: flex;
-  gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 4px;
-  margin-bottom: 12px;
-}
-
-.settings-style-tab {
-  flex: 1;
-  padding: 8px 0;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.settings-style-tab.active {
-  background: var(--work-soft);
-  color: var(--work);
-}
-
 .settings-bg-row {
   display: flex;
   align-items: center;

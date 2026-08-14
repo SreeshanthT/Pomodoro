@@ -14,32 +14,25 @@ const SCREENS: { key: Screen; label: string; Icon: typeof TimerIcon }[] = [
 
 export function App() {
   const [screen, setScreen] = useState<Screen>('timer')
-  const [focusMode, setFocusMode] = useState(false)
-
-  const showRail = !(focusMode && screen === 'timer')
 
   return (
     <div className="app-shell">
-      {showRail && (
-        <nav className="app-rail">
-          {SCREENS.map(({ key, label, Icon }) => (
-            <button
-              key={key}
-              className={`app-rail-item${screen === key ? ' active' : ''}`}
-              onClick={() => setScreen(key)}
-              title={label}
-            >
-              <Icon />
-              <span>{label}</span>
-            </button>
-          ))}
-        </nav>
-      )}
+      <nav className="app-rail">
+        {SCREENS.map(({ key, label, Icon }) => (
+          <button
+            key={key}
+            className={`app-rail-item${screen === key ? ' active' : ''}`}
+            onClick={() => setScreen(key)}
+            title={label}
+          >
+            <Icon />
+            <span>{label}</span>
+          </button>
+        ))}
+      </nav>
 
-      <div className={`app-content${!showRail ? ' app-content-focus' : ''}`}>
-        {screen === 'timer' && (
-          <TimerScreen focusMode={focusMode} onToggleFocusMode={() => setFocusMode((f) => !f)} />
-        )}
+      <div className="app-content">
+        {screen === 'timer' && <TimerScreen />}
         {screen === 'todo' && <TodoScreen />}
         {screen === 'settings' && <SettingsScreen />}
       </div>

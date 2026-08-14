@@ -24,6 +24,10 @@ const api = {
   sessions: {
     getAll: (): Promise<FocusSession[]> => ipcRenderer.invoke('sessions:getAll')
   },
+  windows: {
+    openFocus: (): Promise<void> => ipcRenderer.invoke('windows:openFocus'),
+    openMini: (): Promise<void> => ipcRenderer.invoke('windows:openMini')
+  },
   timer: {
     getState: (): Promise<TimerState> => ipcRenderer.invoke('timer:getState'),
     start: (taskId: string | null): Promise<void> => ipcRenderer.invoke('timer:start', taskId),
