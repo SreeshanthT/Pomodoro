@@ -1,9 +1,10 @@
-import type { TimerStatus } from '@shared/types'
+import type { TimerCountMode, TimerStatus } from '@shared/types'
 import { PauseIcon, PlayIcon, ResetIcon, SkipIcon } from '../shared/icons'
 import { IconButton } from '../shared/IconButton'
 
 interface TimerControlsProps {
   status: TimerStatus
+  mode: TimerCountMode
   onStart: () => void
   onPause: () => void
   onResume: () => void
@@ -11,7 +12,9 @@ interface TimerControlsProps {
   onReset: () => void
 }
 
-export function TimerControls({ status, onStart, onPause, onResume, onSkip, onReset }: TimerControlsProps) {
+export function TimerControls({ status, mode, onStart, onPause, onResume, onSkip, onReset }: TimerControlsProps) {
+  const skipLabel = mode === 'countup' ? 'Finish' : 'Skip'
+
   return (
     <div className="timer-controls">
       {status !== 'idle' && (
@@ -40,7 +43,7 @@ export function TimerControls({ status, onStart, onPause, onResume, onSkip, onRe
       )}
 
       {status !== 'idle' && (
-        <IconButton label="Skip" onClick={onSkip}>
+        <IconButton label={skipLabel} onClick={onSkip}>
           <SkipIcon />
         </IconButton>
       )}

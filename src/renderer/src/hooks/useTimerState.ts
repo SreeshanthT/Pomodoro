@@ -5,7 +5,8 @@ import { platform } from '../adapters/electronAdapter'
 const idleState: TimerState = {
   status: 'idle',
   phase: 'work',
-  remainingSeconds: 25 * 60,
+  mode: 'countdown',
+  displaySeconds: 25 * 60,
   durationSeconds: 25 * 60,
   sessionsCompleted: 0,
   linkedTaskId: null

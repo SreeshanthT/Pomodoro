@@ -402,3 +402,115 @@
   font-size: 10px;
   color: var(--text-muted);
 }
+
+/* Timer Mode dialog */
+
+.timer-mode-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 12, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.timer-mode-dialog {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 20px;
+  background: rgba(24, 28, 38, 0.8);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-md);
+  text-align: left;
+}
+
+.timer-mode-title {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text);
+}
+
+.timer-mode-option {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.timer-mode-option.active {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+}
+
+.timer-mode-option-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.timer-mode-option-range {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-mode-arrow {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.timer-mode-check {
+  width: 16px;
+  height: 16px;
+  color: var(--short-break);
+  flex-shrink: 0;
+}
+
+.timer-mode-option p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.timer-mode-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.timer-mode-cancel,
+.timer-mode-ok {
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.timer-mode-cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.timer-mode-ok {
+  background: var(--danger);
+  border: none;
+  color: #fff;
+}

@@ -21,12 +21,16 @@ export type SessionPhase = 'work' | 'shortBreak' | 'longBreak'
 
 export type TimerStatus = 'idle' | 'running' | 'paused'
 
+/** countdown: counts down to 00:00 then advances the phase. countup: counts up from 00:00 until stopped manually. */
+export type TimerCountMode = 'countdown' | 'countup'
+
 export interface TimerState {
   status: TimerStatus
   phase: SessionPhase
-  /** seconds remaining in the current phase */
-  remainingSeconds: number
-  /** total seconds for the current phase, for progress calculation */
+  mode: TimerCountMode
+  /** the number on the clock: seconds remaining (countdown) or seconds elapsed (countup) */
+  displaySeconds: number
+  /** total seconds for the current phase; 0 in countup mode, where there's no fixed target */
   durationSeconds: number
   /** how many work sessions completed since the last long break */
   sessionsCompleted: number
@@ -47,6 +51,7 @@ export interface Settings {
   ambientVolume: number
   chimeVolume: number
   dialBackground: DialBackground
+  countMode: TimerCountMode
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -58,7 +63,8 @@ export const DEFAULT_SETTINGS: Settings = {
   chimeSound: 'bell',
   ambientVolume: 0.5,
   chimeVolume: 0.6,
-  dialBackground: 'forest'
+  dialBackground: 'forest',
+  countMode: 'countdown'
 }
 
 /** Emitted by the main-process timer engine when a phase completes and the next one starts. */

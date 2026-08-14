@@ -42,7 +42,7 @@ export function FocusApp() {
       </div>
 
       <div className="focus-center">
-        <TimerFlipClock remainingSeconds={state.remainingSeconds} />
+        <TimerFlipClock totalSeconds={state.displaySeconds} />
 
         <button className="focus-play-pause" onClick={handlePlayPause} aria-label={state.status === 'running' ? 'Pause' : 'Play'}>
           {state.status === 'running' ? <PauseIcon /> : <PlayIcon />}

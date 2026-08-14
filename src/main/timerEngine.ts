@@ -1,19 +1,23 @@
 import { addFocusSession, getSettings, incrementCompletedPomodoro } from './db'
-import type { SessionCompleteEvent, SessionPhase, TimerState, TimerStatus } from '@shared/types'
+import type { SessionCompleteEvent, SessionPhase, TimerCountMode, TimerState, TimerStatus } from '@shared/types'
 
 type TickListener = (state: TimerState) => void
 type CompleteListener = (event: SessionCompleteEvent) => void
 
 /**
- * Timestamp-based countdown so remaining time is always derived from wall-clock
- * time rather than decremented by setInterval — avoids drift and survives
- * renderer/main throttling since this runs entirely in the main process.
+ * Timestamp-based, elapsed-time tracking so the displayed number is always
+ * derived from wall-clock time rather than decremented/incremented by
+ * setInterval — avoids drift and survives renderer/main throttling since this
+ * runs entirely in the main process. Both timer modes share the same elapsed
+ * clock: countdown displays (duration - elapsed), countup displays elapsed
+ * directly and never auto-completes.
  */
 class TimerEngine {
   private status: TimerStatus = 'idle'
   private phase: SessionPhase = 'work'
+  private mode: TimerCountMode = 'countdown'
   private durationSeconds = 0
-  private remainingAtRunStart = 0
+  private elapsedAtRunStart = 0
   private runStartTimestamp: number | null = null
   private sessionsCompleted = 0
   private linkedTaskId: string | null = null
@@ -24,8 +28,8 @@ class TimerEngine {
   private completeListeners = new Set<CompleteListener>()
 
   init(): void {
-    this.durationSeconds = this.durationForPhase('work')
-    this.remainingAtRunStart = this.durationSeconds
+    this.mode = getSettings().countMode
+    this.durationSeconds = this.mode === 'countdown' ? this.durationForPhase('work') : 0
   }
 
   onTick(listener: TickListener): () => void {
@@ -39,10 +43,14 @@ class TimerEngine {
   }
 
   getState(): TimerState {
+    const elapsed = this.computeElapsed()
+    const displaySeconds =
+      this.mode === 'countdown' ? Math.ceil(Math.max(0, this.durationSeconds - elapsed)) : Math.floor(elapsed)
     return {
       status: this.status,
       phase: this.phase,
-      remainingSeconds: Math.ceil(this.computeRemaining()),
+      mode: this.mode,
+      displaySeconds,
       durationSeconds: this.durationSeconds,
       sessionsCompleted: this.sessionsCompleted,
       linkedTaskId: this.linkedTaskId
@@ -51,9 +59,10 @@ class TimerEngine {
 
   start(taskId: string | null): void {
     this.linkedTaskId = taskId
+    this.mode = getSettings().countMode
     this.phase = 'work'
-    this.durationSeconds = this.durationForPhase('work')
-    this.remainingAtRunStart = this.durationSeconds
+    this.durationSeconds = this.mode === 'countdown' ? this.durationForPhase('work') : 0
+    this.elapsedAtRunStart = 0
     this.status = 'running'
     this.runStartTimestamp = Date.now()
     this.workPhaseStartedAt = Date.now()
@@ -63,7 +72,7 @@ class TimerEngine {
 
   pause(): void {
     if (this.status !== 'running') return
-    this.remainingAtRunStart = this.computeRemaining()
+    this.elapsedAtRunStart = this.computeElapsed()
     this.runStartTimestamp = null
     this.status = 'paused'
     this.stopTicking()
@@ -78,6 +87,7 @@ class TimerEngine {
     this.emitTick()
   }
 
+  /** Advances to the next phase now — the natural "done" action for countup mode, or a manual skip in countdown mode. */
   skip(): void {
     if (this.status === 'idle') return
     this.completeCurrentPhase()
@@ -85,10 +95,11 @@ class TimerEngine {
 
   reset(): void {
     this.stopTicking()
+    this.mode = getSettings().countMode
     this.status = 'idle'
     this.phase = 'work'
-    this.durationSeconds = this.durationForPhase('work')
-    this.remainingAtRunStart = this.durationSeconds
+    this.durationSeconds = this.mode === 'countdown' ? this.durationForPhase('work') : 0
+    this.elapsedAtRunStart = 0
     this.runStartTimestamp = null
     this.workPhaseStartedAt = null
     this.emitTick()
@@ -108,12 +119,11 @@ class TimerEngine {
     }
   }
 
-  private computeRemaining(): number {
+  private computeElapsed(): number {
     if (this.status !== 'running' || this.runStartTimestamp === null) {
-      return this.remainingAtRunStart
+      return this.elapsedAtRunStart
     }
-    const elapsed = (Date.now() - this.runStartTimestamp) / 1000
-    return Math.max(0, this.remainingAtRunStart - elapsed)
+    return this.elapsedAtRunStart + (Date.now() - this.runStartTimestamp) / 1000
   }
 
   private startTicking(): void {
@@ -128,7 +138,7 @@ class TimerEngine {
   }
 
   private tick(): void {
-    if (this.computeRemaining() <= 0) {
+    if (this.mode === 'countdown' && this.computeElapsed() >= this.durationSeconds) {
       this.completeCurrentPhase()
     } else {
       this.emitTick()
@@ -137,6 +147,8 @@ class TimerEngine {
 
   private completeCurrentPhase(): void {
     const completedPhase = this.phase
+    const completedDurationSeconds =
+      this.mode === 'countdown' ? this.durationSeconds : Math.floor(this.computeElapsed())
     const settings = getSettings()
 
     if (completedPhase === 'work') {
@@ -148,8 +160,10 @@ class TimerEngine {
       }
       addFocusSession({
         taskId: this.linkedTaskId,
-        startedAt: new Date(this.workPhaseStartedAt ?? Date.now() - this.durationSeconds * 1000).toISOString(),
-        durationSeconds: this.durationSeconds
+        startedAt: new Date(
+          this.workPhaseStartedAt ?? Date.now() - completedDurationSeconds * 1000
+        ).toISOString(),
+        durationSeconds: completedDurationSeconds
       }).catch(() => {
         // best-effort: stats logging shouldn't block the timer from advancing
       })
@@ -162,9 +176,10 @@ class TimerEngine {
           : 'shortBreak'
         : 'work'
 
+    this.mode = settings.countMode
     this.phase = nextPhase
-    this.durationSeconds = this.durationForPhase(nextPhase)
-    this.remainingAtRunStart = this.durationSeconds
+    this.durationSeconds = this.mode === 'countdown' ? this.durationForPhase(nextPhase) : 0
+    this.elapsedAtRunStart = 0
     this.runStartTimestamp = Date.now()
     this.workPhaseStartedAt = nextPhase === 'work' ? Date.now() : null
     this.status = 'running'

@@ -42,12 +42,12 @@ function FlipUnit({ value }: { value: string }) {
 }
 
 interface TimerFlipClockProps {
-  remainingSeconds: number
+  totalSeconds: number
 }
 
-export function TimerFlipClock({ remainingSeconds }: TimerFlipClockProps) {
-  const minutes = Math.floor(remainingSeconds / 60)
-  const seconds = remainingSeconds % 60
+export function TimerFlipClock({ totalSeconds }: TimerFlipClockProps) {
+  const minutes = Math.floor(totalSeconds / 60)
+  const seconds = totalSeconds % 60
 
   return (
     <div className="flip-clock">

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTimerStore } from '../../state/timerStore'
 import { useSettingsStore } from '../../state/settingsStore'
 import { useTaskStore } from '../../state/taskStore'
@@ -13,6 +13,7 @@ import { SessionDots } from './SessionDots'
 import { TaskSearchBar } from './TaskSearchBar'
 import { QuickActionsRow } from './QuickActionsRow'
 import { TimerSidebar } from './TimerSidebar'
+import { TimerModeDialog } from './TimerModeDialog'
 import './timer.css'
 
 const PHASE_LABEL: Record<string, string> = {
@@ -52,6 +53,8 @@ export function TimerScreen() {
   const loadSessions = useSessionStore((s) => s.load)
   const sessionsLoaded = useSessionStore((s) => s.loaded)
 
+  const [timerModeOpen, setTimerModeOpen] = useState(false)
+
   useEffect(() => {
     subscribe()
   }, [subscribe])
@@ -74,8 +77,14 @@ export function TimerScreen() {
   const colorVar =
     state.phase === 'work' ? 'var(--work)' : state.phase === 'shortBreak' ? 'var(--short-break)' : 'var(--long-break)'
 
-  const progress = state.durationSeconds > 0 ? 1 - state.remainingSeconds / state.durationSeconds : 0
-  const timeLabel = formatTime(state.remainingSeconds)
+  // Countdown: ring drains as time runs out. Countup: hand sweeps once per hour of elapsed time, repeating.
+  const progress =
+    state.mode === 'countdown'
+      ? state.durationSeconds > 0
+        ? 1 - state.displaySeconds / state.durationSeconds
+        : 0
+      : (state.displaySeconds % 3600) / 3600
+  const timeLabel = formatTime(state.displaySeconds)
 
   return (
     <div className="screen screen-wide timer-screen timer-screen-dial" style={{ ['--phase-color' as string]: colorVar }}>
@@ -106,6 +115,7 @@ export function TimerScreen() {
 
           <TimerControls
             status={state.status}
+            mode={state.mode}
             onStart={start}
             onPause={pause}
             onResume={resume}
@@ -115,6 +125,7 @@ export function TimerScreen() {
 
           <QuickActionsRow
             onFullscreen={() => platform.windows.openFocus()}
+            onTimerMode={() => setTimerModeOpen(true)}
             whiteNoiseOn={settings.ambientSound === 'white-noise'}
             onToggleWhiteNoise={() =>
               saveSettings({ ...settings, ambientSound: settings.ambientSound === 'white-noise' ? 'none' : 'white-noise' })
@@ -129,6 +140,18 @@ export function TimerScreen() {
           onToggleTask={toggleComplete}
         />
       </div>
+
+      {timerModeOpen && (
+        <TimerModeDialog
+          currentMode={settings.countMode}
+          workDurationMin={settings.workDurationMin}
+          onCancel={() => setTimerModeOpen(false)}
+          onConfirm={(mode) => {
+            saveSettings({ ...settings, countMode: mode })
+            setTimerModeOpen(false)
+          }}
+        />
+      )}
     </div>
   )
 }

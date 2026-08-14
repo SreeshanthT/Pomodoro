@@ -17,9 +17,15 @@ export function MiniApp() {
     else platform.timer.start(state.linkedTaskId)
   }
 
-  const progress = state.durationSeconds > 0 ? 1 - state.remainingSeconds / state.durationSeconds : 0
+  // Countdown: arc drains as time runs out. Countup: arc sweeps once per hour of elapsed time, repeating.
+  const progress =
+    state.mode === 'countdown'
+      ? state.durationSeconds > 0
+        ? 1 - state.displaySeconds / state.durationSeconds
+        : 0
+      : (state.displaySeconds % 3600) / 3600
   const offset = CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, progress)))
-  const minutesLeft = Math.floor(state.remainingSeconds / 60)
+  const minutesLeft = Math.floor(state.displaySeconds / 60)
 
   const colorVar =
     state.phase === 'work' ? 'var(--work)' : state.phase === 'shortBreak' ? 'var(--short-break)' : 'var(--long-break)'
