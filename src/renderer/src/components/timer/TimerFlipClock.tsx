@@ -19,10 +19,23 @@ function FlipUnit({ value }: { value: string }) {
 
   return (
     <div className="flip-unit">
-      <div className={`flip-card${flipping ? ' flipping' : ''}`}>
-        <div className="flip-face flip-face-front">{flipping ? previous : current}</div>
-        <div className="flip-face flip-face-back">{current}</div>
+      <div className="flip-half flip-half-top">
+        <span className="flip-digit">{current}</span>
       </div>
+      <div className="flip-half flip-half-bottom">
+        <span className="flip-digit">{current}</span>
+      </div>
+
+      {flipping && (
+        <>
+          <div className="flip-half flip-half-top flip-leaf-top">
+            <span className="flip-digit">{previous}</span>
+          </div>
+          <div className="flip-half flip-half-bottom flip-leaf-bottom">
+            <span className="flip-digit">{current}</span>
+          </div>
+        </>
+      )}
     </div>
   )
 }
