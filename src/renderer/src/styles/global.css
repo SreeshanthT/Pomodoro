@@ -1,7 +1,12 @@
 @import './theme.css';
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(53, 85, 219, 0.28), transparent 42%),
+    radial-gradient(circle at 88% 92%, rgba(91, 115, 215, 0.22), transparent 46%),
+    radial-gradient(circle at 90% 5%, rgba(47, 191, 143, 0.12), transparent 40%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--text);
 }
 
@@ -26,6 +31,8 @@ body {
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   padding-top: 12px;
   gap: 2px;
 }
@@ -105,6 +112,8 @@ body {
 
 .btn-secondary {
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border-color: var(--border);
   color: var(--text);
 }

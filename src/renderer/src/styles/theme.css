@@ -1,53 +1,39 @@
+/*
+  Dark-only "glass" theme. Two swatches from the source palette were internally
+  inconsistent with their own name/role (an "Off White" swap tagged with a pink
+  hex, and a pale "Cool Grey" tagged with a purple hex under the Success role) —
+  those two were replaced with a real off-white and a green that actually reads
+  as "success", everything else uses the palette's hex values as given.
+*/
 :root {
-  --bg: #faf8f5;
-  --surface: #ffffff;
-  --surface-hover: #f3efe9;
-  --text: #2d2a26;
-  --text-muted: #8a8378;
-  --border: #eae4da;
+  --bg: #101923;
+  --surface: rgba(255, 255, 255, 0.055);
+  --surface-hover: rgba(255, 255, 255, 0.09);
+  --text: #f5f6f8;
+  --text-muted: #92a0ae;
+  --border: rgba(255, 255, 255, 0.12);
 
-  --work: #d97757;
-  --work-soft: #f8e3d8;
-  --short-break: #4f9d8d;
-  --short-break-soft: #dcefe9;
-  --long-break: #5b7fa6;
-  --long-break-soft: #dee7f1;
+  --work: #3555db;
+  --work-soft: rgba(53, 85, 219, 0.18);
+  --short-break: #2fbf8f;
+  --short-break-soft: rgba(47, 191, 143, 0.16);
+  --long-break: #5b73d7;
+  --long-break-soft: rgba(91, 115, 215, 0.16);
 
-  --danger: #c1554a;
+  --secondary: #799ae3;
+  --warning: #f98c5e;
+  --danger: #e64848;
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 24px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
 
-  --shadow-sm: 0 1px 2px rgba(30, 25, 15, 0.06);
-  --shadow-md: 0 4px 16px rgba(30, 25, 15, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 12px 40px rgba(0, 0, 0, 0.45);
 
-  color-scheme: light;
-}
+  --glass-blur: 24px;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #1c1a17;
-    --surface: #262320;
-    --surface-hover: #302c27;
-    --text: #f1ebe2;
-    --text-muted: #9c9285;
-    --border: #3a352e;
-
-    --work: #e08a67;
-    --work-soft: #3d2c22;
-    --short-break: #6bb5a4;
-    --short-break-soft: #22352f;
-    --long-break: #7ea0c9;
-    --long-break-soft: #232c38;
-
-    --danger: #d97a70;
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
-
-    color-scheme: dark;
-  }
+  color-scheme: dark;
 }
 
 * {

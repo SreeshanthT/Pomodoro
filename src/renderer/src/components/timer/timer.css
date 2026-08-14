@@ -56,7 +56,9 @@
 }
 
 .timer-screen-dial .task-search-bar input {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border-color: rgba(255, 255, 255, 0.25);
   color: #fff;
 }
@@ -77,7 +79,9 @@
 }
 
 .timer-screen-dial .sidebar-card {
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -203,6 +207,8 @@
   border-radius: 999px;
   border: 1px solid var(--border);
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   color: var(--text);
   font-size: 13px;
   text-align: center;
@@ -240,6 +246,8 @@
   margin: 0;
   padding: 6px;
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
@@ -312,6 +320,8 @@
 
 .sidebar-card {
   background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 14px 16px;
