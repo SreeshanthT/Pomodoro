@@ -9,6 +9,7 @@ import { registerTimerHandlers } from './ipc/timerHandlers'
 import { registerSessionHandlers } from './ipc/sessionHandlers'
 import { registerWindowHandlers } from './ipc/windowHandlers'
 import { registerProjectHandlers } from './ipc/projectHandlers'
+import { registerBackupHandlers } from './ipc/backupHandlers'
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.pomodorotodo.app')
@@ -26,6 +27,7 @@ app.whenReady().then(async () => {
   registerTimerHandlers()
   registerWindowHandlers()
   registerProjectHandlers()
+  registerBackupHandlers()
 
   createMainWindow()
 

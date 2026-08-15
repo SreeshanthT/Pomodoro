@@ -1,4 +1,5 @@
 import type {
+  BackupResult,
   FocusSession,
   NewProject,
   NewTask,
@@ -37,6 +38,10 @@ export interface PlatformApi {
   windows: {
     openFocus(): Promise<void>
     openMini(): Promise<void>
+  }
+  backup: {
+    export(): Promise<BackupResult>
+    import(): Promise<BackupResult>
   }
   timer: {
     getState(): Promise<TimerState>

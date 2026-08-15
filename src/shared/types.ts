@@ -106,3 +106,8 @@ export interface FocusSession {
   startedAt: string
   durationSeconds: number
 }
+
+export interface BackupResult {
+  success: boolean
+  path?: string
+}

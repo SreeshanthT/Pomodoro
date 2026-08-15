@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react'
 import type { DialBackground, Settings } from '@shared/types'
 import { useSettingsStore } from '../../state/settingsStore'
 import { DIAL_BACKGROUND_LABELS, DIAL_BACKGROUND_URLS } from '../../assets/backgrounds'
+import { platform } from '../../adapters/electronAdapter'
 import { Select } from '../shared/Select'
+import { ConfirmDialog } from '../shared/ConfirmDialog'
+import { Button } from '../shared/Button'
 import './settings.css'
 
 const AMBIENT_OPTIONS: { value: Settings['ambientSound']; label: string }[] = [
@@ -27,6 +30,9 @@ export function SettingsScreen() {
   const save = useSettingsStore((s) => s.save)
 
   const [draft, setDraft] = useState<Settings>(stored)
+  const [backupStatus, setBackupStatus] = useState<string | null>(null)
+  const [confirmingRestore, setConfirmingRestore] = useState(false)
+  const [restoring, setRestoring] = useState(false)
 
   useEffect(() => {
     if (!loaded) load()
@@ -40,6 +46,20 @@ export function SettingsScreen() {
     const next = { ...draft, ...updates }
     setDraft(next)
     save(next)
+  }
+
+  const handleBackup = async () => {
+    setBackupStatus(null)
+    const result = await platform.backup.export()
+    setBackupStatus(result.success ? `Backed up to ${result.path}` : null)
+  }
+
+  const handleRestore = async () => {
+    setConfirmingRestore(false)
+    setRestoring(true)
+    // On success the main process relaunches the app, so this promise never resolves observably.
+    const result = await platform.backup.import()
+    if (!result.success) setRestoring(false)
   }
 
   return (
@@ -129,6 +149,7 @@ export function SettingsScreen() {
             max={1}
             step={0.05}
             value={draft.ambientVolume}
+            style={{ ['--range-progress' as string]: `${draft.ambientVolume * 100}%` }}
             onChange={(e) => patch({ ambientVolume: Number(e.target.value) })}
           />
         </label>
@@ -146,10 +167,40 @@ export function SettingsScreen() {
             max={1}
             step={0.05}
             value={draft.chimeVolume}
+            style={{ ['--range-progress' as string]: `${draft.chimeVolume * 100}%` }}
             onChange={(e) => patch({ chimeVolume: Number(e.target.value) })}
           />
         </label>
       </section>
+
+      <section className="settings-section">
+        <h2>Data</h2>
+        <p className="settings-data-hint">
+          Your tasks, sessions, and settings live in a local SQLite database on this computer. Back it up to a file, or
+          restore from one — restoring replaces everything currently saved.
+        </p>
+
+        <div className="settings-data-actions">
+          <Button variant="secondary" onClick={handleBackup}>
+            Backup data
+          </Button>
+          <Button variant="secondary" onClick={() => setConfirmingRestore(true)} disabled={restoring}>
+            {restoring ? 'Restoring…' : 'Restore data'}
+          </Button>
+        </div>
+
+        {backupStatus && <p className="settings-data-status">{backupStatus}</p>}
+      </section>
+
+      {confirmingRestore && (
+        <ConfirmDialog
+          title="Restore data?"
+          message="This replaces all current tasks, sessions, projects, and settings with the contents of the backup file you choose. This can't be undone."
+          confirmLabel="Choose file & restore"
+          onConfirm={handleRestore}
+          onCancel={() => setConfirmingRestore(false)}
+        />
+      )}
     </div>
   )
 }

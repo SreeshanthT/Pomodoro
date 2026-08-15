@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type {
+  BackupResult,
   FocusSession,
   NewProject,
   NewTask,
@@ -34,6 +35,10 @@ const api = {
   windows: {
     openFocus: (): Promise<void> => ipcRenderer.invoke('windows:openFocus'),
     openMini: (): Promise<void> => ipcRenderer.invoke('windows:openMini')
+  },
+  backup: {
+    export: (): Promise<BackupResult> => ipcRenderer.invoke('backup:export'),
+    import: (): Promise<BackupResult> => ipcRenderer.invoke('backup:import')
   },
   timer: {
     getState: (): Promise<TimerState> => ipcRenderer.invoke('timer:getState'),

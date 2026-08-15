@@ -77,6 +77,37 @@
 .settings-slider-row input[type='range'] {
   flex: 1;
   max-width: 140px;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--work) var(--range-progress, 50%),
+    rgba(255, 255, 255, 0.14) var(--range-progress, 50%)
+  );
+  cursor: pointer;
+}
+
+.settings-slider-row input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 3px var(--work-soft);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.settings-slider-row input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+.settings-slider-row input[type='range']:active::-webkit-slider-thumb {
+  transform: scale(1.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 5px var(--work-soft);
 }
 
 .settings-bg-row {
@@ -109,4 +140,23 @@
 
 .settings-bg-swatch.active {
   border-color: var(--work);
+}
+
+.settings-data-hint {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.settings-data-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.settings-data-status {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--short-break);
+  word-break: break-all;
 }
