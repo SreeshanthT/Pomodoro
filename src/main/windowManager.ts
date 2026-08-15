@@ -76,7 +76,7 @@ export function openMiniWindow(): void {
     return
   }
   miniWindow = new BrowserWindow({
-    width: 196,
+    width: 228,
     height: 68,
     show: false,
     frame: false,

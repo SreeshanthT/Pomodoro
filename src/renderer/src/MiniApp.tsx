@@ -1,6 +1,6 @@
 import { useTimerState } from './hooks/useTimerState'
 import { platform } from './adapters/electronAdapter'
-import { CloseIcon, PauseIcon, PlayIcon } from './components/shared/icons'
+import { CloseIcon, ExpandIcon, PauseIcon, PlayIcon } from './components/shared/icons'
 import './styles/mini.css'
 
 const SIZE = 40
@@ -30,6 +30,11 @@ export function MiniApp() {
   const colorVar =
     state.phase === 'work' ? 'var(--work)' : state.phase === 'shortBreak' ? 'var(--short-break)' : 'var(--long-break)'
 
+  const handleMaximize = () => {
+    platform.windows.openFocus()
+    window.close()
+  }
+
   return (
     <div className="mini-widget" style={{ ['--phase-color' as string]: colorVar }}>
       <div className="mini-ring">
@@ -54,6 +59,9 @@ export function MiniApp() {
       <div className="mini-actions">
         <button className="mini-btn" onClick={handlePlayPause} aria-label={state.status === 'running' ? 'Pause' : 'Play'}>
           {state.status === 'running' ? <PauseIcon /> : <PlayIcon />}
+        </button>
+        <button className="mini-btn" onClick={handleMaximize} aria-label="Maximize">
+          <ExpandIcon />
         </button>
         <button className="mini-btn" onClick={() => window.close()} aria-label="Close">
           <CloseIcon />
