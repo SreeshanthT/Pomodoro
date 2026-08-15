@@ -64,7 +64,7 @@ export interface TimerState {
 
 export type SoundChoice = 'none' | 'tick' | 'rain' | 'white-noise'
 export type ChimeChoice = 'bell' | 'digital' | 'soft-bell'
-export type DialBackground = 'forest' | 'dusk' | 'ocean' | 'midnight' | 'blueGalaxy'
+export type DialBackground = 'forest' | 'dusk' | 'ocean' | 'midnight' | 'blueGalaxy' | 'ambient'
 
 export interface Settings {
   workDurationMin: number
