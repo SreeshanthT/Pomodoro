@@ -1,5 +1,9 @@
 appId: com.pomodorotodo.app
 productName: PomodoroTodo
+publish:
+  provider: github
+  owner: SreeshanthT
+  repo: Pomodoro
 directories:
   buildResources: build
   output: release
