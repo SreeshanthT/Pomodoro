@@ -4,6 +4,7 @@ publish:
   provider: github
   owner: SreeshanthT
   repo: Pomodoro
+  releaseType: release
 directories:
   buildResources: build
   output: release
