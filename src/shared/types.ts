@@ -1,21 +1,46 @@
+export interface Subtask {
+  id: string
+  title: string
+  completed: boolean
+}
+
+export type RecurrenceRule = 'daily' | 'weekly'
+
 export interface Task {
   id: string
   title: string
   notes?: string
-  /** ISO date, "YYYY-MM-DD" — drives Today/Tomorrow/Upcoming bucketing */
+  /** ISO date, "YYYY-MM-DD" — drives Today/Tomorrow/This Week/Planned bucketing */
   dueDate: string
   completed: boolean
   createdAt: string
   completedAt: string | null
   estimatedPomodoros: number
   completedPomodoros: number
+  priority: boolean
+  subtasks: Subtask[]
+  /** null = one-off. On completion, the next occurrence is auto-created and this instance stays completed. */
+  recurrence: RecurrenceRule | null
+  projectId: string | null
+  /** manual sort position within whatever list it's shown in; lower sorts first */
+  order: number
 }
 
-export type NewTask = Pick<Task, 'title' | 'dueDate'> & Partial<Pick<Task, 'notes' | 'estimatedPomodoros'>>
+export type NewTask = Pick<Task, 'title' | 'dueDate'> &
+  Partial<Pick<Task, 'notes' | 'estimatedPomodoros' | 'priority' | 'recurrence' | 'projectId' | 'subtasks'>>
 
 export type TaskUpdate = Partial<Omit<Task, 'id' | 'createdAt'>>
 
-export type TaskGroup = 'today' | 'tomorrow' | 'upcoming'
+export type TaskGroup = 'today' | 'tomorrow' | 'thisWeek' | 'planned' | 'completed' | 'all'
+
+export interface Project {
+  id: string
+  name: string
+  color: string
+  createdAt: string
+}
+
+export type NewProject = Pick<Project, 'name' | 'color'>
 
 export type SessionPhase = 'work' | 'shortBreak' | 'longBreak'
 

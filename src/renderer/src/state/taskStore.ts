@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { NewTask, Task, TaskUpdate } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
+import { addDaysToIso } from '../utils/dateGroups'
 
 interface TaskStore {
   tasks: Task[]
@@ -9,7 +10,9 @@ interface TaskStore {
   addTask: (input: NewTask) => Promise<void>
   updateTask: (id: string, updates: TaskUpdate) => Promise<void>
   toggleComplete: (id: string) => Promise<void>
-  removeTask: (id: string) => Promise<void>
+  togglePriority: (id: string) => Promise<void>
+  removeTask: (id: string) => Promise<Task | undefined>
+  reorderTasks: (orderedIds: string[]) => Promise<void>
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
@@ -37,10 +40,37 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     if (!task) return
     const completed = !task.completed
     await get().updateTask(id, { completed, completedAt: completed ? new Date().toISOString() : null })
+
+    // Completing a recurring task spawns the next occurrence; this instance stays completed for history/stats.
+    if (completed && task.recurrence) {
+      const daysToAdd = task.recurrence === 'daily' ? 1 : 7
+      await get().addTask({
+        title: task.title,
+        notes: task.notes,
+        dueDate: addDaysToIso(task.dueDate, daysToAdd),
+        estimatedPomodoros: task.estimatedPomodoros,
+        priority: task.priority,
+        recurrence: task.recurrence,
+        projectId: task.projectId,
+        subtasks: task.subtasks.map((s) => ({ ...s, completed: false }))
+      })
+    }
+  },
+
+  togglePriority: async (id) => {
+    const task = get().tasks.find((t) => t.id === id)
+    if (!task) return
+    await get().updateTask(id, { priority: !task.priority })
   },
 
   removeTask: async (id) => {
+    const task = get().tasks.find((t) => t.id === id)
     await platform.tasks.delete(id)
     set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }))
+    return task
+  },
+
+  reorderTasks: async (orderedIds) => {
+    await Promise.all(orderedIds.map((id, index) => get().updateTask(id, { order: index })))
   }
 }))

@@ -1,6 +1,8 @@
 import type {
   FocusSession,
+  NewProject,
   NewTask,
+  Project,
   SessionCompleteEvent,
   Settings,
   Task,
@@ -26,6 +28,11 @@ export interface PlatformApi {
   }
   sessions: {
     getAll(): Promise<FocusSession[]>
+  }
+  projects: {
+    getAll(): Promise<Project[]>
+    create(input: NewProject): Promise<Project>
+    delete(id: string): Promise<void>
   }
   windows: {
     openFocus(): Promise<void>

@@ -1,35 +1,95 @@
 import type { Task } from '@shared/types'
-import { TrashIcon } from '../shared/icons'
+import { isOverdue } from '../../utils/dateGroups'
+import { CheckIcon, DragHandleIcon, StarIcon, TrashIcon } from '../shared/icons'
 import { IconButton } from '../shared/IconButton'
 
 interface TaskItemProps {
   task: Task
+  selectMode: boolean
+  selected: boolean
   onToggle: (id: string) => void
   onEdit: (task: Task) => void
   onDelete: (id: string) => void
+  onToggleSelect: (id: string) => void
+  onTogglePriority: (id: string) => void
+  onDragStart: () => void
+  onDragOver: (e: React.DragEvent) => void
+  onDrop: () => void
 }
 
-export function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
+export function TaskItem({
+  task,
+  selectMode,
+  selected,
+  onToggle,
+  onEdit,
+  onDelete,
+  onToggleSelect,
+  onTogglePriority,
+  onDragStart,
+  onDragOver,
+  onDrop
+}: TaskItemProps) {
+  const overdue = isOverdue(task)
+  const subtaskDone = task.subtasks.filter((s) => s.completed).length
+
+  const handleCheckboxClick = () => {
+    if (selectMode) onToggleSelect(task.id)
+    else onToggle(task.id)
+  }
+
   return (
-    <li className={`task-item${task.completed ? ' completed' : ''}`}>
-      <button className="task-checkbox" onClick={() => onToggle(task.id)} aria-label="Toggle complete">
-        {task.completed && (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 6 9 17l-5-5" />
-          </svg>
-        )}
+    <li
+      className={`task-item${task.completed ? ' completed' : ''}${overdue ? ' overdue' : ''}`}
+      draggable={!selectMode}
+      onDragStart={onDragStart}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+    >
+      {!selectMode && (
+        <span className="task-drag-handle">
+          <DragHandleIcon />
+        </span>
+      )}
+
+      <button
+        className={`task-checkbox${selectMode ? ' select-mode' : ''}`}
+        onClick={handleCheckboxClick}
+        aria-label={selectMode ? 'Select task' : 'Toggle complete'}
+      >
+        {(selectMode ? selected : task.completed) && <CheckIcon />}
       </button>
 
-      <button className="task-body" onClick={() => onEdit(task)}>
+      <button className="task-body" onClick={() => (selectMode ? onToggleSelect(task.id) : onEdit(task))}>
         <span className="task-title">{task.title}</span>
-        <span className="task-pomodoros">
-          🍅 {task.completedPomodoros}/{task.estimatedPomodoros}
+        <span className="task-meta">
+          {task.subtasks.length > 0 && (
+            <span className="task-subtask-count">
+              {subtaskDone}/{task.subtasks.length}
+            </span>
+          )}
+          {overdue && <span className="task-overdue-tag">Overdue</span>}
+          <span className="task-pomodoros">
+            🍅 {task.completedPomodoros}/{task.estimatedPomodoros}
+          </span>
         </span>
       </button>
 
-      <IconButton label="Delete task" onClick={() => onDelete(task.id)}>
-        <TrashIcon />
-      </IconButton>
+      {!selectMode && (
+        <IconButton
+          label={task.priority ? 'Unflag priority' : 'Flag priority'}
+          className={`task-priority-btn${task.priority ? ' active' : ''}`}
+          onClick={() => onTogglePriority(task.id)}
+        >
+          <StarIcon filled={task.priority} />
+        </IconButton>
+      )}
+
+      {!selectMode && (
+        <IconButton label="Delete task" onClick={() => onDelete(task.id)}>
+          <TrashIcon />
+        </IconButton>
+      )}
     </li>
   )
 }

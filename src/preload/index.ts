@@ -1,7 +1,9 @@
 import { contextBridge, ipcRenderer } from 'electron'
 import type {
   FocusSession,
+  NewProject,
   NewTask,
+  Project,
   SessionCompleteEvent,
   Settings,
   Task,
@@ -23,6 +25,11 @@ const api = {
   },
   sessions: {
     getAll: (): Promise<FocusSession[]> => ipcRenderer.invoke('sessions:getAll')
+  },
+  projects: {
+    getAll: (): Promise<Project[]> => ipcRenderer.invoke('projects:getAll'),
+    create: (input: NewProject): Promise<Project> => ipcRenderer.invoke('projects:create', input),
+    delete: (id: string): Promise<void> => ipcRenderer.invoke('projects:delete', id)
   },
   windows: {
     openFocus: (): Promise<void> => ipcRenderer.invoke('windows:openFocus'),

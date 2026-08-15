@@ -6,7 +6,7 @@ import { useSessionStore } from '../../state/sessionStore'
 import { useTimerSounds } from '../../hooks/useTimerSounds'
 import { platform } from '../../adapters/electronAdapter'
 import { DIAL_BACKGROUND_URLS } from '../../assets/backgrounds'
-import { groupTasks, isToday } from '../../utils/dateGroups'
+import { groupTasksByDate, isToday } from '../../utils/dateGroups'
 import { TimerDial } from './TimerDial'
 import { TimerControls } from './TimerControls'
 import { SessionDots } from './SessionDots'
@@ -78,7 +78,7 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
     () => todaySessions.reduce((sum, s) => sum + s.durationSeconds, 0),
     [todaySessions]
   )
-  const todayTasks = useMemo(() => groupTasks(tasks.filter((t) => !t.completed)).today, [tasks])
+  const todayTasks = useMemo(() => groupTasksByDate(tasks.filter((t) => !t.completed)).today, [tasks])
 
   const colorVar =
     state.phase === 'work' ? 'var(--work)' : state.phase === 'shortBreak' ? 'var(--short-break)' : 'var(--long-break)'
