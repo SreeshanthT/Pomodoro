@@ -15,16 +15,18 @@ const RAIL_ITEMS: { key: Screen; label: string; Icon: typeof ChecklistIcon }[] =
 export function App() {
   const [screen, setScreen] = useState<Screen>('timer')
   const [timerMinimized, setTimerMinimized] = useState(false)
+  const [previousScreen, setPreviousScreen] = useState<Screen>('todo')
 
   const showingFullTimer = screen === 'timer' && !timerMinimized
   const showRail = !showingFullTimer
 
   const minimizeTimer = () => {
     setTimerMinimized(true)
-    if (screen === 'timer') setScreen('todo')
+    if (screen === 'timer') setScreen(previousScreen)
   }
 
   const restoreTimer = () => {
+    setPreviousScreen(screen)
     setTimerMinimized(false)
     setScreen('timer')
   }
