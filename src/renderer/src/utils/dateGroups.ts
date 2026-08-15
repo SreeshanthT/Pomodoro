@@ -17,6 +17,13 @@ export function tomorrowIso(): string {
   return toIsoDate(d)
 }
 
+/** A date that always buckets as "upcoming" — used as the quick-add default while on that tab. */
+export function upcomingDefaultIso(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 2)
+  return toIsoDate(d)
+}
+
 export function isToday(isoDateTime: string): boolean {
   return toIsoDate(new Date(isoDateTime)) === todayIso()
 }

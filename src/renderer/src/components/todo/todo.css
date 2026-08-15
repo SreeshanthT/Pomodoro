@@ -8,25 +8,6 @@
   margin: 0;
 }
 
-.todo-add-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 999px;
-  border: none;
-  background: var(--work);
-  color: #fff;
-  cursor: pointer;
-  box-shadow: var(--shadow-sm);
-}
-
-.todo-add-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
 .task-group-tabs {
   display: flex;
   gap: 6px;
@@ -64,6 +45,39 @@
 .task-group-count {
   font-size: 11px;
   opacity: 0.8;
+}
+
+.task-quick-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.task-quick-add-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--work);
+  flex-shrink: 0;
+}
+
+.task-quick-add input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.task-quick-add input::placeholder {
+  color: var(--text-muted);
 }
 
 .task-list {

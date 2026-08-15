@@ -1,13 +1,25 @@
 import { useState } from 'react'
-import type { NewTask, Task, TaskGroup, TaskUpdate } from '@shared/types'
+import type { Task, TaskGroup, TaskUpdate } from '@shared/types'
 import { useTasks } from '../../hooks/useTasks'
 import { useTaskStore } from '../../state/taskStore'
-import { todayIso, tomorrowIso } from '../../utils/dateGroups'
+import { todayIso, tomorrowIso, upcomingDefaultIso } from '../../utils/dateGroups'
 import { TaskGroupTabs } from './TaskGroupTabs'
+import { TaskQuickAdd } from './TaskQuickAdd'
 import { TaskList } from './TaskList'
 import { TaskForm } from './TaskForm'
-import { PlusIcon } from '../shared/icons'
 import './todo.css'
+
+const GROUP_LABEL: Record<TaskGroup, string> = {
+  today: 'Today',
+  tomorrow: 'Tomorrow',
+  upcoming: 'Upcoming'
+}
+
+const GROUP_DEFAULT_DUE_DATE: Record<TaskGroup, () => string> = {
+  today: todayIso,
+  tomorrow: tomorrowIso,
+  upcoming: upcomingDefaultIso
+}
 
 const EMPTY_LABEL: Record<TaskGroup, string> = {
   today: 'Nothing due today. Add a task to get focused.',
@@ -24,7 +36,6 @@ export function TodoScreen() {
 
   const [activeGroup, setActiveGroup] = useState<TaskGroup>('today')
   const [editingTask, setEditingTask] = useState<Task | null>(null)
-  const [formOpen, setFormOpen] = useState(false)
 
   const counts: Record<TaskGroup, number> = {
     today: groups.today.length,
@@ -32,29 +43,14 @@ export function TodoScreen() {
     upcoming: groups.upcoming.length
   }
 
-  const defaultDueDate = activeGroup === 'tomorrow' ? tomorrowIso() : todayIso()
+  const openEditForm = (task: Task) => setEditingTask(task)
+  const closeForm = () => setEditingTask(null)
 
-  const openNewTaskForm = () => {
-    setEditingTask(null)
-    setFormOpen(true)
-  }
+  const handleQuickAdd = (title: string) => addTask({ title, dueDate: GROUP_DEFAULT_DUE_DATE[activeGroup]() })
 
-  const openEditForm = (task: Task) => {
-    setEditingTask(task)
-    setFormOpen(true)
-  }
-
-  const closeForm = () => {
-    setFormOpen(false)
-    setEditingTask(null)
-  }
-
-  const handleSave = (input: NewTask | TaskUpdate) => {
-    if (editingTask) {
-      updateTask(editingTask.id, input)
-    } else {
-      addTask(input as NewTask)
-    }
+  const handleSave = (input: TaskUpdate) => {
+    if (!editingTask) return
+    updateTask(editingTask.id, input)
     closeForm()
   }
 
@@ -62,12 +58,11 @@ export function TodoScreen() {
     <div className="screen todo-screen">
       <div className="todo-header">
         <h1 className="screen-title">Tasks</h1>
-        <button className="todo-add-btn" onClick={openNewTaskForm} aria-label="Add task">
-          <PlusIcon />
-        </button>
       </div>
 
       <TaskGroupTabs active={activeGroup} counts={counts} onChange={setActiveGroup} />
+
+      <TaskQuickAdd groupLabel={GROUP_LABEL[activeGroup]} onAdd={handleQuickAdd} />
 
       <TaskList
         tasks={groups[activeGroup]}
@@ -77,9 +72,7 @@ export function TodoScreen() {
         onDelete={removeTask}
       />
 
-      {formOpen && (
-        <TaskForm task={editingTask} defaultDueDate={defaultDueDate} onSave={handleSave} onClose={closeForm} />
-      )}
+      {editingTask && <TaskForm task={editingTask} onSave={handleSave} onClose={closeForm} />}
     </div>
   )
 }

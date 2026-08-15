@@ -1,20 +1,19 @@
 import { useState } from 'react'
-import type { NewTask, Task, TaskUpdate } from '@shared/types'
+import type { Task, TaskUpdate } from '@shared/types'
 import { todayIso, tomorrowIso } from '../../utils/dateGroups'
 import { Button } from '../shared/Button'
 
 interface TaskFormProps {
-  task: Task | null
-  defaultDueDate: string
-  onSave: (input: NewTask | TaskUpdate) => void
+  task: Task
+  onSave: (input: TaskUpdate) => void
   onClose: () => void
 }
 
-export function TaskForm({ task, defaultDueDate, onSave, onClose }: TaskFormProps) {
-  const [title, setTitle] = useState(task?.title ?? '')
-  const [notes, setNotes] = useState(task?.notes ?? '')
-  const [dueDate, setDueDate] = useState(task?.dueDate ?? defaultDueDate)
-  const [estimatedPomodoros, setEstimatedPomodoros] = useState(task?.estimatedPomodoros ?? 1)
+export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
+  const [title, setTitle] = useState(task.title)
+  const [notes, setNotes] = useState(task.notes ?? '')
+  const [dueDate, setDueDate] = useState(task.dueDate)
+  const [estimatedPomodoros, setEstimatedPomodoros] = useState(task.estimatedPomodoros)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,7 +24,7 @@ export function TaskForm({ task, defaultDueDate, onSave, onClose }: TaskFormProp
   return (
     <div className="task-form-overlay" onClick={onClose}>
       <form className="task-form" onClick={(e) => e.stopPropagation()} onSubmit={handleSubmit}>
-        <h2 className="task-form-title">{task ? 'Edit task' : 'New task'}</h2>
+        <h2 className="task-form-title">Edit task</h2>
 
         <input
           className="task-form-input"
@@ -80,7 +79,7 @@ export function TaskForm({ task, defaultDueDate, onSave, onClose }: TaskFormProp
             Cancel
           </Button>
           <Button type="submit" variant="primary">
-            {task ? 'Save' : 'Add task'}
+            Save
           </Button>
         </div>
       </form>
