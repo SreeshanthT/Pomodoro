@@ -47,8 +47,7 @@
   border-bottom: 1px solid var(--border);
 }
 
-.settings-inline-row input,
-.settings-inline-row select {
+.settings-inline-row input {
   padding: 8px 10px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);

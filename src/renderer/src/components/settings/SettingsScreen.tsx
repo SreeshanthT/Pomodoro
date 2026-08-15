@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { DialBackground, Settings } from '@shared/types'
 import { useSettingsStore } from '../../state/settingsStore'
 import { DIAL_BACKGROUND_LABELS, DIAL_BACKGROUND_URLS } from '../../assets/backgrounds'
+import { Select } from '../shared/Select'
 import './settings.css'
 
 const AMBIENT_OPTIONS: { value: Settings['ambientSound']; label: string }[] = [
@@ -115,19 +116,10 @@ export function SettingsScreen() {
       <section className="settings-section">
         <h2>Sound</h2>
 
-        <label className="settings-inline-row">
-          Ambient sound during focus
-          <select
-            value={draft.ambientSound}
-            onChange={(e) => patch({ ambientSound: e.target.value as Settings['ambientSound'] })}
-          >
-            {AMBIENT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="settings-inline-row">
+          <span>Ambient sound during focus</span>
+          <Select value={draft.ambientSound} options={AMBIENT_OPTIONS} onChange={(v) => patch({ ambientSound: v })} />
+        </div>
 
         <label className="settings-slider-row">
           Ambient volume
@@ -141,19 +133,10 @@ export function SettingsScreen() {
           />
         </label>
 
-        <label className="settings-inline-row">
-          Session-end chime
-          <select
-            value={draft.chimeSound}
-            onChange={(e) => patch({ chimeSound: e.target.value as Settings['chimeSound'] })}
-          >
-            {CHIME_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="settings-inline-row">
+          <span>Session-end chime</span>
+          <Select value={draft.chimeSound} options={CHIME_OPTIONS} onChange={(v) => patch({ chimeSound: v })} />
+        </div>
 
         <label className="settings-slider-row">
           Chime volume
