@@ -30,9 +30,10 @@ export function MiniApp() {
   const colorVar =
     state.phase === 'work' ? 'var(--work)' : state.phase === 'shortBreak' ? 'var(--short-break)' : 'var(--long-break)'
 
+  // Opening the focus window closes this mini widget from the main process side —
+  // keeps the two windows mutually exclusive regardless of which one triggers the switch.
   const handleMaximize = () => {
     platform.windows.openFocus()
-    window.close()
   }
 
   return (

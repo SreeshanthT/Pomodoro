@@ -47,6 +47,14 @@ export function createMainWindow(): BrowserWindow {
 }
 
 export function openFocusWindow(): void {
+  // The mini widget represents a "minimized" focus session — maximizing it (from anywhere)
+  // should restore that same session's window, not leave the mini widget floating alongside a new one.
+  // destroy() (not close()) so this happens immediately, not dependent on the close-event lifecycle.
+  if (miniWindow && !miniWindow.isDestroyed()) {
+    miniWindow.destroy()
+  }
+  miniWindow = null
+
   if (focusWindow && !focusWindow.isDestroyed()) {
     focusWindow.focus()
     return
@@ -71,6 +79,11 @@ export function openFocusWindow(): void {
 }
 
 export function openMiniWindow(): void {
+  if (focusWindow && !focusWindow.isDestroyed()) {
+    focusWindow.destroy()
+  }
+  focusWindow = null
+
   if (miniWindow && !miniWindow.isDestroyed()) {
     miniWindow.focus()
     return

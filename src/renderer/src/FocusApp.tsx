@@ -19,9 +19,10 @@ export function FocusApp() {
     else platform.timer.start(state.linkedTaskId)
   }
 
+  // Opening the mini widget closes this focus window from the main process side —
+  // keeps the two windows mutually exclusive regardless of which one triggers the switch.
   const handleCollapse = () => {
     platform.windows.openMini()
-    window.close()
   }
 
   const colorVar =
