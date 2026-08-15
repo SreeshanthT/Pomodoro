@@ -3,7 +3,16 @@
   "version": "0.1.0",
   "description": "Pomodoro Timer + Todo desktop app",
   "main": "./out/main/index.js",
-  "author": "",
+  "author": "Sreeshanth T",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SreeshanthT/Pomodoro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SreeshanthT/Pomodoro/issues"
+  },
+  "homepage": "https://github.com/SreeshanthT/Pomodoro#readme",
   "private": true,
   "scripts": {
     "dev": "electron-vite dev",
@@ -12,6 +21,8 @@
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "start": "electron-vite preview",
     "build:win": "electron-vite build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
@@ -34,6 +45,7 @@
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "typescript": "^5.7.3",
-    "vite": "^7.3.6"
+    "vite": "^7.3.6",
+    "vitest": "^4.1.10"
   }
 }
