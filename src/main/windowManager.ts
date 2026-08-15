@@ -32,9 +32,15 @@ export function createMainWindow(): BrowserWindow {
     webPreferences: basePreferences
   })
 
-  mainWindow.on('ready-to-show', () => mainWindow?.show())
+  mainWindow.on('ready-to-show', () => {
+    mainWindow?.show()
+    if (is.dev) mainWindow?.webContents.openDevTools({ mode: 'detach' })
+  })
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+  mainWindow.webContents.on('before-input-event', (_event, input) => {
+    if (input.key === 'F12') mainWindow?.webContents.toggleDevTools()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -73,6 +79,9 @@ export function openFocusWindow(): void {
   focusWindow.on('ready-to-show', () => focusWindow?.show())
   focusWindow.on('closed', () => {
     focusWindow = null
+  })
+  focusWindow.webContents.on('before-input-event', (_event, input) => {
+    if (input.key === 'F12') focusWindow?.webContents.toggleDevTools()
   })
 
   loadPage(focusWindow, 'focus.html')

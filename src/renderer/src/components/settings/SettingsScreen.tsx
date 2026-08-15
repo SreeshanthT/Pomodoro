@@ -76,7 +76,7 @@ export function SettingsScreen() {
               <button
                 key={bg}
                 className={`settings-bg-swatch${draft.dialBackground === bg ? ' active' : ''}`}
-                style={{ backgroundImage: `url(${DIAL_BACKGROUND_URLS[bg]})` }}
+                style={{ backgroundImage: `url("${DIAL_BACKGROUND_URLS[bg]}")` }}
                 onClick={() => patch({ dialBackground: bg })}
                 aria-label={DIAL_BACKGROUND_LABELS[bg]}
                 title={DIAL_BACKGROUND_LABELS[bg]}

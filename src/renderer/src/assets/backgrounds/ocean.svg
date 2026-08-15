@@ -1,20 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1400" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0.5" y2="1">
-      <stop offset="0%" stop-color="#071824"/>
-      <stop offset="50%" stop-color="#0d3348"/>
-      <stop offset="100%" stop-color="#155e72"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#070f1c"/>
+      <stop offset="50%" stop-color="#16295c"/>
+      <stop offset="100%" stop-color="#2f49b0"/>
     </linearGradient>
     <filter id="blur1" x="-50%" y="-50%" width="200%" height="200%">
       <feGaussianBlur stdDeviation="100"/>
     </filter>
     <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="150"/>
+      <feGaussianBlur stdDeviation="140"/>
     </filter>
   </defs>
-  <rect width="800" height="1400" fill="url(#bg)"/>
-  <ellipse cx="650" cy="380" rx="300" ry="240" fill="#1f7f8f" opacity="0.5" filter="url(#blur1)"/>
-  <ellipse cx="150" cy="1100" rx="360" ry="300" fill="#0a4256" opacity="0.6" filter="url(#blur2)"/>
-  <ellipse cx="600" cy="1200" rx="240" ry="200" fill="#4fb8c4" opacity="0.25" filter="url(#blur1)"/>
-  <ellipse cx="100" cy="220" rx="200" ry="170" fill="#1a5a68" opacity="0.45" filter="url(#blur2)"/>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <ellipse cx="260" cy="200" rx="380" ry="320" fill="#23378c" opacity="0.4" filter="url(#blur2)"/>
+  <ellipse cx="1320" cy="180" rx="420" ry="340" fill="#3555db" opacity="0.3" filter="url(#blur1)"/>
+  <ellipse cx="800" cy="480" rx="460" ry="360" fill="#1c2c68" opacity="0.35" filter="url(#blur2)"/>
+  <ellipse cx="220" cy="750" rx="400" ry="320" fill="#101a38" opacity="0.45" filter="url(#blur1)"/>
+  <ellipse cx="1360" cy="760" rx="420" ry="340" fill="#4763c8" opacity="0.3" filter="url(#blur2)"/>
 </svg>

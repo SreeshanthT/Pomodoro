@@ -64,7 +64,7 @@ export interface TimerState {
 
 export type SoundChoice = 'none' | 'tick' | 'rain' | 'white-noise'
 export type ChimeChoice = 'bell' | 'digital' | 'soft-bell'
-export type DialBackground = 'forest' | 'dusk' | 'ocean' | 'midnight'
+export type DialBackground = 'forest' | 'dusk' | 'ocean' | 'midnight' | 'blueGalaxy'
 
 export interface Settings {
   workDurationMin: number
@@ -88,7 +88,7 @@ export const DEFAULT_SETTINGS: Settings = {
   chimeSound: 'bell',
   ambientVolume: 0.5,
   chimeVolume: 0.6,
-  dialBackground: 'forest',
+  dialBackground: 'blueGalaxy',
   countMode: 'countdown'
 }
 

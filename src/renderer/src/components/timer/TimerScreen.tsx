@@ -96,7 +96,7 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
     <div className="screen screen-wide timer-screen timer-screen-dial" style={{ ['--phase-color' as string]: colorVar }}>
       <div
         className="timer-dial-bg"
-        style={{ backgroundImage: `url(${DIAL_BACKGROUND_URLS[settings.dialBackground]})` }}
+        style={{ backgroundImage: `url("${DIAL_BACKGROUND_URLS[settings.dialBackground]}")` }}
       />
       <div className="timer-dial-vignette" />
 
