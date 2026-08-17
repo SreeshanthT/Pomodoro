@@ -3,7 +3,6 @@ import { useTimerStore } from '../../state/timerStore'
 import { useSettingsStore } from '../../state/settingsStore'
 import { useTaskStore } from '../../state/taskStore'
 import { useSessionStore } from '../../state/sessionStore'
-import { useTimerSounds } from '../../hooks/useTimerSounds'
 import { platform } from '../../adapters/electronAdapter'
 import { DIAL_BACKGROUND_URLS } from '../../assets/backgrounds'
 import { groupTasksByDate, isToday } from '../../utils/dateGroups'
@@ -70,8 +69,6 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
     if (!tasksLoaded) loadTasks()
     if (!sessionsLoaded) loadSessions()
   }, [settingsLoaded, loadSettings, tasksLoaded, loadTasks, sessionsLoaded, loadSessions])
-
-  useTimerSounds()
 
   const todaySessions = useMemo(() => sessions.filter((s) => isToday(s.startedAt)), [sessions])
   const todayFocusSeconds = useMemo(

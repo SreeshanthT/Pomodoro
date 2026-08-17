@@ -4,6 +4,7 @@ import { TodoScreen } from './components/todo/TodoScreen'
 import { SettingsScreen } from './components/settings/SettingsScreen'
 import { MiniTimerBar } from './components/timer/MiniTimerBar'
 import { ChecklistIcon, SettingsIcon } from './components/shared/icons'
+import { useTimerSounds } from './hooks/useTimerSounds'
 
 type Screen = 'timer' | 'todo' | 'settings'
 
@@ -16,6 +17,8 @@ export function App() {
   const [screen, setScreen] = useState<Screen>('timer')
   const [timerMinimized, setTimerMinimized] = useState(false)
   const [previousScreen, setPreviousScreen] = useState<Screen>('todo')
+
+  useTimerSounds()
 
   const showingFullTimer = screen === 'timer' && !timerMinimized
   const showRail = !showingFullTimer

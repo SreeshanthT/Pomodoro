@@ -3,6 +3,7 @@ import { useTimerStore } from '../state/timerStore'
 import { useSettingsStore } from '../state/settingsStore'
 import { AMBIENT_SOUND_URLS, CHIME_SOUND_URLS } from '../assets/sounds'
 import { useSound } from './useSound'
+import { useAmbientLoop } from './useAmbientLoop'
 
 /** Wires the running timer's phase transitions to ambient + chime playback per the current settings. */
 export function useTimerSounds(): void {
@@ -12,7 +13,7 @@ export function useTimerSounds(): void {
   const settings = useSettingsStore((s) => s.settings)
 
   const ambientUrl = settings.ambientSound === 'none' ? null : AMBIENT_SOUND_URLS[settings.ambientSound]
-  const ambient = useSound(ambientUrl, { loop: true, volume: settings.ambientVolume })
+  const ambient = useAmbientLoop(ambientUrl, { volume: settings.ambientVolume })
   const chime = useSound(CHIME_SOUND_URLS[settings.chimeSound], { volume: settings.chimeVolume })
 
   useEffect(() => {
