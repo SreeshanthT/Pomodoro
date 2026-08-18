@@ -198,6 +198,21 @@ export async function createTask(input: NewTask): Promise<Task> {
 
 const BOOLEAN_TASK_FIELDS = new Set<keyof TaskUpdate>(['completed', 'priority'])
 
+const ALLOWED_TASK_COLUMNS = new Set<keyof TaskUpdate>([
+  'title',
+  'notes',
+  'dueDate',
+  'completed',
+  'completedAt',
+  'estimatedPomodoros',
+  'completedPomodoros',
+  'priority',
+  'subtasks',
+  'recurrence',
+  'projectId',
+  'order'
+])
+
 export async function updateTask(id: string, updates: TaskUpdate): Promise<Task | null> {
   const existing = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id) as unknown as TaskRow | undefined
   if (!existing) return null
@@ -205,6 +220,7 @@ export async function updateTask(id: string, updates: TaskUpdate): Promise<Task 
   const sets: string[] = []
   const values: unknown[] = []
   for (const [key, value] of Object.entries(updates) as [keyof TaskUpdate, unknown][]) {
+    if (!ALLOWED_TASK_COLUMNS.has(key)) continue
     const column = key === 'order' ? '"order"' : key
     sets.push(`${column} = ?`)
     if (BOOLEAN_TASK_FIELDS.has(key)) values.push(value ? 1 : 0)
