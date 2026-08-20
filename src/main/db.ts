@@ -171,7 +171,7 @@ export function getTasks(): Task[] {
   return rows.map(rowToTask)
 }
 
-export async function createTask(input: NewTask): Promise<Task> {
+function insertTaskRow(input: NewTask): Task {
   const now = new Date().toISOString()
   const task: Task = {
     id: randomUUID(),
@@ -209,6 +209,32 @@ export async function createTask(input: NewTask): Promise<Task> {
     task.order
   )
   return task
+}
+
+export async function createTask(input: NewTask): Promise<Task> {
+  return insertTaskRow(input)
+}
+
+export interface CompleteRecurringResult {
+  completedTask: Task
+  nextTask: Task
+}
+
+/** Marks a task completed and spawns its next occurrence as a single atomic operation. */
+export async function completeRecurringTask(
+  id: string,
+  completedAt: string,
+  nextOccurrence: NewTask
+): Promise<CompleteRecurringResult | null> {
+  const existing = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id) as unknown as TaskRow | undefined
+  if (!existing) return null
+
+  return runInTransaction(() => {
+    db.prepare('UPDATE tasks SET completed = 1, completedAt = ? WHERE id = ?').run(completedAt, id)
+    const completedRow = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id) as unknown as TaskRow
+    const nextTask = insertTaskRow(nextOccurrence)
+    return { completedTask: rowToTask(completedRow), nextTask }
+  })
 }
 
 const BOOLEAN_TASK_FIELDS = new Set<keyof TaskUpdate>(['completed', 'priority'])
