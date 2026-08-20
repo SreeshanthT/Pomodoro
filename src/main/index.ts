@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, dialog } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './windowManager'
 import { initDb } from './db'
@@ -18,22 +18,28 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window)
   })
 
-  await initDb()
-  timerEngine.init()
+  try {
+    await initDb()
+    timerEngine.init()
 
-  registerTaskHandlers()
-  registerSettingsHandlers()
-  registerSessionHandlers()
-  registerTimerHandlers()
-  registerWindowHandlers()
-  registerProjectHandlers()
-  registerBackupHandlers()
+    registerTaskHandlers()
+    registerSettingsHandlers()
+    registerSessionHandlers()
+    registerTimerHandlers()
+    registerWindowHandlers()
+    registerProjectHandlers()
+    registerBackupHandlers()
 
-  createMainWindow()
+    createMainWindow()
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
-  })
+    app.on('activate', () => {
+      if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
+    })
+  } catch (error) {
+    console.error('PomodoroTodo failed to start:', error)
+    dialog.showErrorBox('PomodoroTodo failed to start', error instanceof Error ? error.message : String(error))
+    app.quit()
+  }
 })
 
 app.on('window-all-closed', () => {
