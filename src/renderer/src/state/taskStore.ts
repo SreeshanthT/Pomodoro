@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { NewTask, Task, TaskUpdate } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
 import { addDaysToIso } from '../utils/dateGroups'
+import { useToastStore } from './toastStore'
 
 interface TaskStore {
   tasks: Task[]
@@ -20,19 +21,37 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   loaded: false,
 
   load: async () => {
-    const tasks = await platform.tasks.getAll()
-    set({ tasks, loaded: true })
+    try {
+      const tasks = await platform.tasks.getAll()
+      set({ tasks, loaded: true })
+    } catch (err) {
+      console.error('Failed to load tasks', err)
+      useToastStore.getState().pushError('Failed to load tasks.')
+    }
   },
 
   addTask: async (input) => {
-    const task = await platform.tasks.create(input)
-    set((state) => ({ tasks: [...state.tasks, task] }))
+    try {
+      const task = await platform.tasks.create(input)
+      set((state) => ({ tasks: [...state.tasks, task] }))
+    } catch (err) {
+      console.error('Failed to create task', err)
+      useToastStore.getState().pushError('Failed to create task.')
+    }
   },
 
+  // Swallows its own errors (toasting instead) so callers that delegate to it
+  // (togglePriority, reorderTasks, toggleComplete's non-recurring path) don't
+  // each need their own try/catch to stay safe from unhandled rejections.
   updateTask: async (id, updates) => {
-    const updated = await platform.tasks.update(id, updates)
-    if (!updated) return
-    set((state) => ({ tasks: state.tasks.map((t) => (t.id === id ? updated : t)) }))
+    try {
+      const updated = await platform.tasks.update(id, updates)
+      if (!updated) return
+      set((state) => ({ tasks: state.tasks.map((t) => (t.id === id ? updated : t)) }))
+    } catch (err) {
+      console.error('Failed to update task', err)
+      useToastStore.getState().pushError('Failed to update task.')
+    }
   },
 
   toggleComplete: async (id) => {
@@ -62,15 +81,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         }))
       } catch (err) {
         console.error('Failed to complete recurring task', err)
+        useToastStore.getState().pushError('Failed to complete task.')
       }
       return
     }
 
-    try {
-      await get().updateTask(id, { completed, completedAt: completed ? new Date().toISOString() : null })
-    } catch (err) {
-      console.error('Failed to toggle task completion', err)
-    }
+    // updateTask handles/toasts its own errors, so no try/catch needed here.
+    await get().updateTask(id, { completed, completedAt: completed ? new Date().toISOString() : null })
   },
 
   togglePriority: async (id) => {
@@ -81,9 +98,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   removeTask: async (id) => {
     const task = get().tasks.find((t) => t.id === id)
-    await platform.tasks.delete(id)
-    set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }))
-    return task
+    try {
+      await platform.tasks.delete(id)
+      set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }))
+      return task
+    } catch (err) {
+      console.error('Failed to delete task', err)
+      useToastStore.getState().pushError('Failed to delete task.')
+      return undefined
+    }
   },
 
   reorderTasks: async (orderedIds) => {

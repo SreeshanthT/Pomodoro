@@ -3,6 +3,7 @@ import { TimerScreen } from './components/timer/TimerScreen'
 import { TodoScreen } from './components/todo/TodoScreen'
 import { SettingsScreen } from './components/settings/SettingsScreen'
 import { MiniTimerBar } from './components/timer/MiniTimerBar'
+import { ToastContainer } from './components/shared/ToastContainer'
 import { ChecklistIcon, SettingsIcon } from './components/shared/icons'
 import { useTimerSounds } from './hooks/useTimerSounds'
 
@@ -59,6 +60,8 @@ export function App() {
       </div>
 
       {timerMinimized && <MiniTimerBar onExpand={restoreTimer} />}
+
+      <ToastContainer />
     </div>
   )
 }
