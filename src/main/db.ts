@@ -298,6 +298,26 @@ export function backupDatabaseTo(destPath: string): void {
   db.exec(`VACUUM INTO '${escaped}'`)
 }
 
+const REQUIRED_TABLES = ['tasks', 'projects', 'sessions', 'kv']
+
+/** Opens candidatePath read-only and checks it has the tables this app expects, without touching the live db. */
+export function isValidBackupFile(candidatePath: string): boolean {
+  let candidate: DatabaseSync | undefined
+  try {
+    candidate = new DatabaseSync(candidatePath, { readOnly: true })
+    const tables = new Set(
+      (candidate.prepare("SELECT name FROM sqlite_master WHERE type = 'table'").all() as { name: string }[]).map(
+        (row) => row.name
+      )
+    )
+    return REQUIRED_TABLES.every((name) => tables.has(name))
+  } catch {
+    return false
+  } finally {
+    candidate?.close()
+  }
+}
+
 export function getActiveDbPath(): string {
   return getDbPath()
 }

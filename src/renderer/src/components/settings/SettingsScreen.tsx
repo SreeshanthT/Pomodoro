@@ -57,9 +57,13 @@ export function SettingsScreen() {
   const handleRestore = async () => {
     setConfirmingRestore(false)
     setRestoring(true)
+    setBackupStatus(null)
     // On success the main process relaunches the app, so this promise never resolves observably.
     const result = await platform.backup.import()
-    if (!result.success) setRestoring(false)
+    if (!result.success) {
+      setRestoring(false)
+      if (result.error) setBackupStatus(result.error)
+    }
   }
 
   return (

@@ -110,4 +110,5 @@ export interface FocusSession {
 export interface BackupResult {
   success: boolean
   path?: string
+  error?: string
 }
