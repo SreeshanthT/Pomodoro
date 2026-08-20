@@ -146,6 +146,7 @@ class TimerEngine {
   }
 
   private completeCurrentPhase(): void {
+    const stayPaused = this.status === 'paused'
     const completedPhase = this.phase
     const completedDurationSeconds =
       this.mode === 'countdown' ? this.durationSeconds : Math.floor(this.computeElapsed())
@@ -180,10 +181,10 @@ class TimerEngine {
     this.phase = nextPhase
     this.durationSeconds = this.mode === 'countdown' ? this.durationForPhase(nextPhase) : 0
     this.elapsedAtRunStart = 0
-    this.runStartTimestamp = Date.now()
+    this.runStartTimestamp = stayPaused ? null : Date.now()
     this.workPhaseStartedAt = nextPhase === 'work' ? Date.now() : null
-    this.status = 'running'
-    this.startTicking()
+    this.status = stayPaused ? 'paused' : 'running'
+    if (!stayPaused) this.startTicking()
 
     this.emitSessionComplete({ completedPhase, nextPhase, linkedTaskId: this.linkedTaskId })
     this.emitTick()
