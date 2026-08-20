@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import type { Settings } from '@shared/types'
 import { DEFAULT_SETTINGS } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
+import { useToastStore } from './toastStore'
 
 interface SettingsStore {
   settings: Settings
@@ -21,13 +22,25 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   loaded: false,
 
   load: async () => {
-    const settings = await platform.settings.get()
-    set({ settings, loaded: true })
+    try {
+      const settings = await platform.settings.get()
+      set({ settings, loaded: true })
+    } catch (err) {
+      console.error('Failed to load settings', err)
+      useToastStore.getState().pushError('Failed to load settings.')
+    }
   },
 
   save: async (settings) => {
     const requestId = ++latestSaveRequestId
-    const saved = await platform.settings.save(settings)
-    if (requestId === latestSaveRequestId) set({ settings: saved })
+    try {
+      const saved = await platform.settings.save(settings)
+      if (requestId === latestSaveRequestId) set({ settings: saved })
+    } catch (err) {
+      console.error('Failed to save settings', err)
+      // Only surface one toast for the latest request in a burst (e.g. a fast slider
+      // drag) — otherwise every failed intermediate save would spam its own toast.
+      if (requestId === latestSaveRequestId) useToastStore.getState().pushError('Failed to save settings.')
+    }
   }
 }))

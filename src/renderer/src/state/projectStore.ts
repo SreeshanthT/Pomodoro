@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { NewProject, Project } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
+import { useToastStore } from './toastStore'
 
 interface ProjectStore {
   projects: Project[]
@@ -15,17 +16,32 @@ export const useProjectStore = create<ProjectStore>((set) => ({
   loaded: false,
 
   load: async () => {
-    const projects = await platform.projects.getAll()
-    set({ projects, loaded: true })
+    try {
+      const projects = await platform.projects.getAll()
+      set({ projects, loaded: true })
+    } catch (err) {
+      console.error('Failed to load projects', err)
+      useToastStore.getState().pushError('Failed to load projects.')
+    }
   },
 
   addProject: async (input) => {
-    const project = await platform.projects.create(input)
-    set((state) => ({ projects: [...state.projects, project] }))
+    try {
+      const project = await platform.projects.create(input)
+      set((state) => ({ projects: [...state.projects, project] }))
+    } catch (err) {
+      console.error('Failed to create project', err)
+      useToastStore.getState().pushError('Failed to create project.')
+    }
   },
 
   removeProject: async (id) => {
-    await platform.projects.delete(id)
-    set((state) => ({ projects: state.projects.filter((p) => p.id !== id) }))
+    try {
+      await platform.projects.delete(id)
+      set((state) => ({ projects: state.projects.filter((p) => p.id !== id) }))
+    } catch (err) {
+      console.error('Failed to delete project', err)
+      useToastStore.getState().pushError('Failed to delete project.')
+    }
   }
 }))

@@ -3,6 +3,7 @@ import type { SessionCompleteEvent, TimerState } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
 import { useTaskStore } from './taskStore'
 import { useSessionStore } from './sessionStore'
+import { useToastStore } from './toastStore'
 
 interface TimerStore {
   state: TimerState
@@ -28,6 +29,15 @@ const idleState: TimerState = {
   linkedTaskId: null
 }
 
+async function runTimerAction(action: () => Promise<void>, errorMessage: string): Promise<void> {
+  try {
+    await action()
+  } catch (err) {
+    console.error(errorMessage, err)
+    useToastStore.getState().pushError(errorMessage)
+  }
+}
+
 export const useTimerStore = create<TimerStore>((set, get) => ({
   state: idleState,
   selectedTaskId: null,
@@ -38,7 +48,13 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
     if (get().subscribed) return
     set({ subscribed: true })
 
-    platform.timer.getState().then((state) => set({ state }))
+    platform.timer.getState().then(
+      (state) => set({ state }),
+      (err) => {
+        console.error('Failed to load timer state', err)
+        useToastStore.getState().pushError('Failed to load timer state.')
+      }
+    )
 
     platform.timer.onTick((state) => set({ state }))
 
@@ -55,18 +71,18 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
   selectTask: (taskId) => set({ selectedTaskId: taskId }),
 
   start: async () => {
-    await platform.timer.start(get().selectedTaskId)
+    await runTimerAction(() => platform.timer.start(get().selectedTaskId), 'Failed to start timer.')
   },
   pause: async () => {
-    await platform.timer.pause()
+    await runTimerAction(() => platform.timer.pause(), 'Failed to pause timer.')
   },
   resume: async () => {
-    await platform.timer.resume()
+    await runTimerAction(() => platform.timer.resume(), 'Failed to resume timer.')
   },
   skip: async () => {
-    await platform.timer.skip()
+    await runTimerAction(() => platform.timer.skip(), 'Failed to skip phase.')
   },
   reset: async () => {
-    await platform.timer.reset()
+    await runTimerAction(() => platform.timer.reset(), 'Failed to reset timer.')
   }
 }))

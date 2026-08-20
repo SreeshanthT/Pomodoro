@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { FocusSession } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
+import { useToastStore } from './toastStore'
 
 interface SessionStore {
   sessions: FocusSession[]
@@ -13,7 +14,12 @@ export const useSessionStore = create<SessionStore>((set) => ({
   loaded: false,
 
   load: async () => {
-    const sessions = await platform.sessions.getAll()
-    set({ sessions, loaded: true })
+    try {
+      const sessions = await platform.sessions.getAll()
+      set({ sessions, loaded: true })
+    } catch (err) {
+      console.error('Failed to load focus sessions', err)
+      useToastStore.getState().pushError('Failed to load focus history.')
+    }
   }
 }))
