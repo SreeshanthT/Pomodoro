@@ -10,6 +10,12 @@ interface SettingsStore {
   save: (settings: Settings) => Promise<void>
 }
 
+// Concurrent unawaited save() calls (e.g. one settings:save IPC round-trip per
+// slider drag tick) can resolve out of order. Track the latest request and
+// drop any response that isn't from it, so a stale reply can never overwrite
+// a value the user has already dragged past.
+let latestSaveRequestId = 0
+
 export const useSettingsStore = create<SettingsStore>((set) => ({
   settings: DEFAULT_SETTINGS,
   loaded: false,
@@ -20,7 +26,8 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   },
 
   save: async (settings) => {
+    const requestId = ++latestSaveRequestId
     const saved = await platform.settings.save(settings)
-    set({ settings: saved })
+    if (requestId === latestSaveRequestId) set({ settings: saved })
   }
 }))
