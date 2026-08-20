@@ -88,9 +88,9 @@ class TimerEngine {
   }
 
   /** Advances to the next phase now — the natural "done" action for countup mode, or a manual skip in countdown mode. */
-  skip(): void {
+  async skip(): Promise<void> {
     if (this.status === 'idle') return
-    this.completeCurrentPhase()
+    await this.completeCurrentPhase()
   }
 
   reset(): void {
@@ -139,13 +139,13 @@ class TimerEngine {
 
   private tick(): void {
     if (this.mode === 'countdown' && this.computeElapsed() >= this.durationSeconds) {
-      this.completeCurrentPhase()
+      void this.completeCurrentPhase().catch((err) => console.error('Failed to complete timer phase', err))
     } else {
       this.emitTick()
     }
   }
 
-  private completeCurrentPhase(): void {
+  private async completeCurrentPhase(): Promise<void> {
     const stayPaused = this.status === 'paused'
     const completedPhase = this.phase
     const completedDurationSeconds =
@@ -155,19 +155,25 @@ class TimerEngine {
     if (completedPhase === 'work') {
       this.sessionsCompleted += 1
       if (this.linkedTaskId) {
-        incrementCompletedPomodoro(this.linkedTaskId).catch(() => {
+        try {
+          await incrementCompletedPomodoro(this.linkedTaskId)
+        } catch (err) {
           // best-effort: session already advances even if the task was deleted mid-session
-        })
+          console.error('Failed to increment completed pomodoro count', err)
+        }
       }
-      addFocusSession({
-        taskId: this.linkedTaskId,
-        startedAt: new Date(
-          this.workPhaseStartedAt ?? Date.now() - completedDurationSeconds * 1000
-        ).toISOString(),
-        durationSeconds: completedDurationSeconds
-      }).catch(() => {
+      try {
+        await addFocusSession({
+          taskId: this.linkedTaskId,
+          startedAt: new Date(
+            this.workPhaseStartedAt ?? Date.now() - completedDurationSeconds * 1000
+          ).toISOString(),
+          durationSeconds: completedDurationSeconds
+        })
+      } catch (err) {
         // best-effort: stats logging shouldn't block the timer from advancing
-      })
+        console.error('Failed to record focus session', err)
+      }
     }
 
     const nextPhase: SessionPhase =
