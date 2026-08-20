@@ -22,6 +22,11 @@ export interface PlatformApi {
     create(input: NewTask): Promise<Task>
     update(id: string, updates: TaskUpdate): Promise<Task | null>
     delete(id: string): Promise<void>
+    completeRecurring(
+      id: string,
+      completedAt: string,
+      nextOccurrence: NewTask
+    ): Promise<{ completedTask: Task; nextTask: Task } | null>
   }
   settings: {
     get(): Promise<Settings>

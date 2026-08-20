@@ -18,7 +18,13 @@ const api = {
     create: (input: NewTask): Promise<Task> => ipcRenderer.invoke('tasks:create', input),
     update: (id: string, updates: TaskUpdate): Promise<Task | null> =>
       ipcRenderer.invoke('tasks:update', id, updates),
-    delete: (id: string): Promise<void> => ipcRenderer.invoke('tasks:delete', id)
+    delete: (id: string): Promise<void> => ipcRenderer.invoke('tasks:delete', id),
+    completeRecurring: (
+      id: string,
+      completedAt: string,
+      nextOccurrence: NewTask
+    ): Promise<{ completedTask: Task; nextTask: Task } | null> =>
+      ipcRenderer.invoke('tasks:completeRecurring', id, completedAt, nextOccurrence)
   },
   settings: {
     get: (): Promise<Settings> => ipcRenderer.invoke('settings:get'),

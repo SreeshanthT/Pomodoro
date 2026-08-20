@@ -39,21 +39,37 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const task = get().tasks.find((t) => t.id === id)
     if (!task) return
     const completed = !task.completed
-    await get().updateTask(id, { completed, completedAt: completed ? new Date().toISOString() : null })
 
-    // Completing a recurring task spawns the next occurrence; this instance stays completed for history/stats.
+    // Completing a recurring task spawns the next occurrence; this instance stays completed for
+    // history/stats. Both writes happen as one atomic main-process operation so a failure spawning
+    // the next occurrence can't leave the task completed with no successor ever created.
     if (completed && task.recurrence) {
       const daysToAdd = task.recurrence === 'daily' ? 1 : 7
-      await get().addTask({
-        title: task.title,
-        notes: task.notes,
-        dueDate: addDaysToIso(task.dueDate, daysToAdd),
-        estimatedPomodoros: task.estimatedPomodoros,
-        priority: task.priority,
-        recurrence: task.recurrence,
-        projectId: task.projectId,
-        subtasks: task.subtasks.map((s) => ({ ...s, completed: false }))
-      })
+      try {
+        const result = await platform.tasks.completeRecurring(id, new Date().toISOString(), {
+          title: task.title,
+          notes: task.notes,
+          dueDate: addDaysToIso(task.dueDate, daysToAdd),
+          estimatedPomodoros: task.estimatedPomodoros,
+          priority: task.priority,
+          recurrence: task.recurrence,
+          projectId: task.projectId,
+          subtasks: task.subtasks.map((s) => ({ ...s, completed: false }))
+        })
+        if (!result) return
+        set((state) => ({
+          tasks: [...state.tasks.map((t) => (t.id === id ? result.completedTask : t)), result.nextTask]
+        }))
+      } catch (err) {
+        console.error('Failed to complete recurring task', err)
+      }
+      return
+    }
+
+    try {
+      await get().updateTask(id, { completed, completedAt: completed ? new Date().toISOString() : null })
+    } catch (err) {
+      console.error('Failed to toggle task completion', err)
     }
   },
 
