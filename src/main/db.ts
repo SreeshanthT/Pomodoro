@@ -83,6 +83,19 @@ function getDbPath(): string {
   return join(app.getPath('userData'), 'data.sqlite')
 }
 
+/** Runs fn inside BEGIN/COMMIT, rolling back if it throws, so a mid-operation crash can't leave partial writes. */
+function runInTransaction<T>(fn: () => T): T {
+  db.exec('BEGIN')
+  try {
+    const result = fn()
+    db.exec('COMMIT')
+    return result
+  } catch (err) {
+    db.exec('ROLLBACK')
+    throw err
+  }
+}
+
 /** One-time import from the pre-SQLite lowdb JSON file, if this is a fresh SQLite db and the old file exists. */
 function migrateFromLegacyJson(): void {
   const legacyPath = join(app.getPath('userData'), 'db.json')
@@ -96,38 +109,40 @@ function migrateFromLegacyJson(): void {
       projects?: Project[]
     }
 
-    const insertTask = db.prepare(
-      `INSERT INTO tasks (id, title, notes, dueDate, completed, createdAt, completedAt, estimatedPomodoros, completedPomodoros, priority, subtasks, recurrence, projectId, "order")
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    )
-    for (const t of legacy.tasks ?? []) {
-      insertTask.run(
-        t.id,
-        t.title,
-        t.notes ?? null,
-        t.dueDate,
-        t.completed ? 1 : 0,
-        t.createdAt,
-        t.completedAt,
-        t.estimatedPomodoros ?? 1,
-        t.completedPomodoros ?? 0,
-        t.priority ? 1 : 0,
-        JSON.stringify(t.subtasks ?? []),
-        t.recurrence ?? null,
-        t.projectId ?? null,
-        t.order ?? Date.now()
+    runInTransaction(() => {
+      const insertTask = db.prepare(
+        `INSERT INTO tasks (id, title, notes, dueDate, completed, createdAt, completedAt, estimatedPomodoros, completedPomodoros, priority, subtasks, recurrence, projectId, "order")
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
-    }
+      for (const t of legacy.tasks ?? []) {
+        insertTask.run(
+          t.id,
+          t.title,
+          t.notes ?? null,
+          t.dueDate,
+          t.completed ? 1 : 0,
+          t.createdAt,
+          t.completedAt,
+          t.estimatedPomodoros ?? 1,
+          t.completedPomodoros ?? 0,
+          t.priority ? 1 : 0,
+          JSON.stringify(t.subtasks ?? []),
+          t.recurrence ?? null,
+          t.projectId ?? null,
+          t.order ?? Date.now()
+        )
+      }
 
-    const insertProject = db.prepare('INSERT INTO projects (id, name, color, createdAt) VALUES (?, ?, ?, ?)')
-    for (const p of legacy.projects ?? []) insertProject.run(p.id, p.name, p.color, p.createdAt)
+      const insertProject = db.prepare('INSERT INTO projects (id, name, color, createdAt) VALUES (?, ?, ?, ?)')
+      for (const p of legacy.projects ?? []) insertProject.run(p.id, p.name, p.color, p.createdAt)
 
-    const insertSession = db.prepare('INSERT INTO sessions (id, taskId, startedAt, durationSeconds) VALUES (?, ?, ?, ?)')
-    for (const s of legacy.sessions ?? []) insertSession.run(s.id, s.taskId, s.startedAt, s.durationSeconds)
+      const insertSession = db.prepare('INSERT INTO sessions (id, taskId, startedAt, durationSeconds) VALUES (?, ?, ?, ?)')
+      for (const s of legacy.sessions ?? []) insertSession.run(s.id, s.taskId, s.startedAt, s.durationSeconds)
 
-    if (legacy.settings) {
-      db.prepare('INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)').run('settings', JSON.stringify(legacy.settings))
-    }
+      if (legacy.settings) {
+        db.prepare('INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)').run('settings', JSON.stringify(legacy.settings))
+      }
+    })
   } catch (err) {
     console.error('Failed to migrate legacy db.json into SQLite', err)
   }
@@ -288,8 +303,10 @@ export async function createProject(input: NewProject): Promise<Project> {
 }
 
 export async function deleteProject(id: string): Promise<void> {
-  db.prepare('DELETE FROM projects WHERE id = ?').run(id)
-  db.prepare('UPDATE tasks SET projectId = NULL WHERE projectId = ?').run(id)
+  runInTransaction(() => {
+    db.prepare('DELETE FROM projects WHERE id = ?').run(id)
+    db.prepare('UPDATE tasks SET projectId = NULL WHERE projectId = ?').run(id)
+  })
 }
 
 /** Writes a consistent snapshot of the live database to destPath, safe to call while the app is running. */
