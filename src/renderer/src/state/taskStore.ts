@@ -66,13 +66,17 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     // the next occurrence can't leave the task completed with no successor ever created.
     if (completed && task.recurrence) {
       const daysToAdd = task.recurrence === 'daily' ? 1 : 7
+      // Anchored to today (not the original due date) so completing an overdue occurrence clears
+      // the backlog in one step. But completing early keeps the original due date as the anchor —
+      // otherwise a task completed exactly one interval ahead of schedule (e.g. a daily task due
+      // tomorrow, completed today) would spawn a next occurrence due on that same original date,
+      // making it look like completing it did nothing.
+      const anchor = task.dueDate > todayIso() ? task.dueDate : todayIso()
       try {
         const result = await platform.tasks.completeRecurring(id, new Date().toISOString(), {
           title: task.title,
           notes: task.notes,
-          // Anchored to today, not the original due date, so completing an overdue occurrence
-          // clears the backlog in one step instead of only advancing from wherever it already was.
-          dueDate: addDaysToIso(todayIso(), daysToAdd),
+          dueDate: addDaysToIso(anchor, daysToAdd),
           estimatedPomodoros: task.estimatedPomodoros,
           priority: task.priority,
           recurrence: task.recurrence,
