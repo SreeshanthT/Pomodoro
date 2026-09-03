@@ -135,7 +135,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
   },
 
+  // Reassigns order values starting just above the current global max, rather than 0..n, so a
+  // drag-reorder in one view (e.g. Today) can't collide with order values another view (e.g.
+  // Tomorrow) already reset to the same small range — order is a single field shared by every
+  // view, including ones (All Tasks, Planned) that mix buckets together.
   reorderTasks: async (orderedIds) => {
-    await Promise.all(orderedIds.map((id, index) => get().updateTask(id, { order: index })))
+    const maxOrder = get().tasks.reduce((max, t) => Math.max(max, t.order), 0)
+    await Promise.all(orderedIds.map((id, index) => get().updateTask(id, { order: maxOrder + 1 + index })))
   }
 }))
