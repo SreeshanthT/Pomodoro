@@ -17,6 +17,11 @@ function loadPage(win: BrowserWindow, page: string): void {
 const basePreferences = {
   preload: join(__dirname, '../preload/index.js'),
   sandbox: false,
+  // Already Electron's default, but pinned explicitly: with sandbox deliberately overridden
+  // above, leaving these two undeclared would mean the renderer's isolation from Node depends
+  // on whatever Electron's default happens to be in a future version, not on anything in code.
+  contextIsolation: true,
+  nodeIntegration: false,
   // Keep the countdown accurate even when a window is minimized/hidden/unfocused.
   backgroundThrottling: false
 }
