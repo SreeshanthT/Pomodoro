@@ -14,8 +14,7 @@ function loadPage(win: BrowserWindow, page: string): void {
   }
 }
 
-const basePreferences = {
-  preload: join(__dirname, '../preload/index.js'),
+const sharedPreferences = {
   sandbox: false,
   // Already Electron's default, but pinned explicitly: with sandbox deliberately overridden
   // above, leaving these two undeclared would mean the renderer's isolation from Node depends
@@ -24,6 +23,20 @@ const basePreferences = {
   nodeIntegration: false,
   // Keep the countdown accurate even when a window is minimized/hidden/unfocused.
   backgroundThrottling: false
+}
+
+// Full task/project/settings/backup/timer access - only the main window needs this.
+const basePreferences = {
+  ...sharedPreferences,
+  preload: join(__dirname, '../preload/index.js')
+}
+
+// Timer controls + window switching only, nothing else. The focus window (standalone timer view)
+// and the mini widget (a 228x68 frameless, always-on-top widget) have no legitimate use for
+// task/project/settings/backup access or destructive IPC channels, so they don't get them.
+const restrictedPreferences = {
+  ...sharedPreferences,
+  preload: join(__dirname, '../preload/restricted.js')
 }
 
 export function createMainWindow(): BrowserWindow {
@@ -78,7 +91,7 @@ export function openFocusWindow(): void {
     show: false,
     autoHideMenuBar: true,
     backgroundColor: '#000000',
-    webPreferences: basePreferences
+    webPreferences: restrictedPreferences
   })
 
   focusWindow.on('ready-to-show', () => focusWindow?.show())
@@ -113,7 +126,7 @@ export function openMiniWindow(): void {
     transparent: true,
     backgroundColor: '#00000000',
     skipTaskbar: true,
-    webPreferences: basePreferences
+    webPreferences: restrictedPreferences
   })
 
   miniWindow.on('ready-to-show', () => miniWindow?.show())
