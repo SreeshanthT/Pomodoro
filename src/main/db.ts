@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS tasks (
   subtasks TEXT NOT NULL DEFAULT '[]',
   recurrence TEXT,
   projectId TEXT,
-  "order" INTEGER NOT NULL DEFAULT 0
+  "order" INTEGER NOT NULL DEFAULT 0,
+  deleted INTEGER NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS projects (
   id TEXT PRIMARY KEY,
@@ -58,6 +59,7 @@ interface TaskRow {
   recurrence: string | null
   projectId: string | null
   order: number
+  deleted: number
 }
 
 function rowToTask(row: TaskRow): Task {
@@ -93,6 +95,16 @@ function runInTransaction<T>(fn: () => T): T {
   } catch (err) {
     db.exec('ROLLBACK')
     throw err
+  }
+}
+
+/** Adds columns introduced after a db already exists on disk; CREATE TABLE IF NOT EXISTS won't add them on its own. */
+function migrateSchema(): void {
+  const columns = new Set(
+    (db.prepare('PRAGMA table_info(tasks)').all() as { name: string }[]).map((col) => col.name)
+  )
+  if (!columns.has('deleted')) {
+    db.exec('ALTER TABLE tasks ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0')
   }
 }
 
@@ -154,6 +166,12 @@ export async function initDb(): Promise<void> {
 
   db = new DatabaseSync(dbPath)
   db.exec(SCHEMA)
+  migrateSchema()
+
+  // Any row still marked deleted at startup is from an undo window that never got to finish
+  // (e.g. the app quit within it) — undo can't survive a restart anyway, so purge it now
+  // rather than leaving it soft-deleted forever.
+  db.exec('DELETE FROM tasks WHERE deleted = 1')
 
   if (isNewDb) migrateFromLegacyJson()
 
@@ -167,7 +185,7 @@ export async function initDb(): Promise<void> {
 }
 
 export function getTasks(): Task[] {
-  const rows = db.prepare('SELECT * FROM tasks').all() as unknown as TaskRow[]
+  const rows = db.prepare('SELECT * FROM tasks WHERE deleted = 0').all() as unknown as TaskRow[]
   return rows.map(rowToTask)
 }
 
@@ -278,6 +296,20 @@ export async function updateTask(id: string, updates: TaskUpdate): Promise<Task 
   return rowToTask(updated)
 }
 
+/** Marks a task deleted without removing its row, so undo can restore it (same id, same completedPomodoros,
+ *  and any FocusSession rows that reference it stay valid). Permanent removal is `deleteTask`. */
+export async function softDeleteTask(id: string): Promise<void> {
+  db.prepare('UPDATE tasks SET deleted = 1 WHERE id = ?').run(id)
+}
+
+/** Reverses `softDeleteTask`. Returns the restored task, or null if the task no longer exists. */
+export async function restoreTask(id: string): Promise<Task | null> {
+  db.prepare('UPDATE tasks SET deleted = 0 WHERE id = ?').run(id)
+  const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id) as unknown as TaskRow | undefined
+  return row ? rowToTask(row) : null
+}
+
+/** Permanently removes a task row. Used for real (non-undoable) deletes and to purge soft-deleted tasks once their undo window has passed. */
 export async function deleteTask(id: string): Promise<void> {
   db.prepare('DELETE FROM tasks WHERE id = ?').run(id)
 }

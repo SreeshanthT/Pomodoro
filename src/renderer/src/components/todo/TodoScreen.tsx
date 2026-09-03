@@ -52,6 +52,8 @@ export function TodoScreen() {
   const toggleComplete = useTaskStore((s) => s.toggleComplete)
   const togglePriority = useTaskStore((s) => s.togglePriority)
   const removeTask = useTaskStore((s) => s.removeTask)
+  const restoreTask = useTaskStore((s) => s.restoreTask)
+  const purgeTask = useTaskStore((s) => s.purgeTask)
   const reorderTasks = useTaskStore((s) => s.reorderTasks)
 
   const projects = useProjectStore((s) => s.projects)
@@ -147,10 +149,19 @@ export function TodoScreen() {
     setSearchQuery('')
   }
 
+  // Deletes are soft: the row survives until either handleUndo restores it or the undo window
+  // lapses and it's purged for real. Replacing a still-pending undo purges the superseded task
+  // immediately, since its own undo window is being cut short.
   const scheduleUndo = (task: Task) => {
-    if (undoTimeout.current) clearTimeout(undoTimeout.current)
+    if (undoTimeout.current) {
+      clearTimeout(undoTimeout.current)
+      if (undoTask) purgeTask(undoTask.id)
+    }
     setUndoTask(task)
-    undoTimeout.current = setTimeout(() => setUndoTask(null), UNDO_WINDOW_MS)
+    undoTimeout.current = setTimeout(() => {
+      setUndoTask(null)
+      purgeTask(task.id)
+    }, UNDO_WINDOW_MS)
   }
 
   const handleDelete = async (id: string) => {
@@ -161,16 +172,7 @@ export function TodoScreen() {
   const handleUndo = () => {
     if (!undoTask) return
     if (undoTimeout.current) clearTimeout(undoTimeout.current)
-    addTask({
-      title: undoTask.title,
-      notes: undoTask.notes,
-      dueDate: undoTask.dueDate,
-      estimatedPomodoros: undoTask.estimatedPomodoros,
-      priority: undoTask.priority,
-      recurrence: undoTask.recurrence,
-      projectId: undoTask.projectId,
-      subtasks: undoTask.subtasks
-    })
+    restoreTask(undoTask.id)
     setUndoTask(null)
   }
 
@@ -194,7 +196,9 @@ export function TodoScreen() {
   }
 
   const handleBulkDelete = () => {
-    for (const id of selectedIds) removeTask(id)
+    // Purges directly rather than going through the soft-delete + undo-toast path (which only
+    // ever tracks one pending task), so bulk-deleted rows don't linger soft-deleted forever.
+    for (const id of selectedIds) purgeTask(id)
     exitSelectMode()
   }
 
