@@ -98,13 +98,40 @@ function runInTransaction<T>(fn: () => T): T {
   }
 }
 
-/** Adds columns introduced after a db already exists on disk; CREATE TABLE IF NOT EXISTS won't add them on its own. */
-function migrateSchema(): void {
-  const columns = new Set(
-    (db.prepare('PRAGMA table_info(tasks)').all() as { name: string }[]).map((col) => col.name)
-  )
-  if (!columns.has('deleted')) {
-    db.exec('ALTER TABLE tasks ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0')
+interface Migration {
+  version: number
+  /** The delta needed to bring an *existing* db from version - 1 up to version. SCHEMA already
+   *  reflects this change for brand-new databases, so this only ever runs against older installs. */
+  migrate: () => void
+}
+
+// Append-only: each entry is a one-way step applied in order, tracked via PRAGMA user_version.
+// Never edit a past entry's migrate() once it has shipped - add a new one instead.
+const MIGRATIONS: Migration[] = [
+  {
+    version: 1,
+    migrate: () => db.exec('ALTER TABLE tasks ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0')
+  }
+]
+
+const LATEST_SCHEMA_VERSION = MIGRATIONS.reduce((max, m) => Math.max(max, m.version), 0)
+
+/** Brings the db up to LATEST_SCHEMA_VERSION. A brand-new db is created by SCHEMA already at the
+ *  latest shape, so it just gets stamped with that version; an existing db runs whatever migrations
+ *  it hasn't seen yet, oldest first, each in its own transaction. */
+function runMigrations(isNewDb: boolean): void {
+  if (isNewDb) {
+    db.exec(`PRAGMA user_version = ${LATEST_SCHEMA_VERSION}`)
+    return
+  }
+
+  const { user_version: currentVersion } = db.prepare('PRAGMA user_version').get() as { user_version: number }
+  const pending = MIGRATIONS.filter((m) => m.version > currentVersion).sort((a, b) => a.version - b.version)
+  for (const migration of pending) {
+    runInTransaction(() => {
+      migration.migrate()
+      db.exec(`PRAGMA user_version = ${migration.version}`)
+    })
   }
 }
 
@@ -166,7 +193,7 @@ export async function initDb(): Promise<void> {
 
   db = new DatabaseSync(dbPath)
   db.exec(SCHEMA)
-  migrateSchema()
+  runMigrations(isNewDb)
 
   // Any row still marked deleted at startup is from an undo window that never got to finish
   // (e.g. the app quit within it) — undo can't survive a restart anyway, so purge it now
