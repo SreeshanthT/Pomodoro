@@ -17,6 +17,14 @@ export default defineConfig({
       alias: {
         '@shared': resolve('src/shared')
       }
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          index: resolve('src/preload/index.ts'),
+          restricted: resolve('src/preload/restricted.ts')
+        }
+      }
     }
   },
   renderer: {
