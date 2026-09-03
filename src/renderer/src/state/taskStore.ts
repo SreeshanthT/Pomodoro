@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { NewTask, Task, TaskUpdate } from '@shared/types'
 import { platform } from '../adapters/electronAdapter'
-import { addDaysToIso } from '../utils/dateGroups'
+import { addDaysToIso, todayIso } from '../utils/dateGroups'
 import { useToastStore } from './toastStore'
 
 interface TaskStore {
@@ -70,7 +70,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         const result = await platform.tasks.completeRecurring(id, new Date().toISOString(), {
           title: task.title,
           notes: task.notes,
-          dueDate: addDaysToIso(task.dueDate, daysToAdd),
+          // Anchored to today, not the original due date, so completing an overdue occurrence
+          // clears the backlog in one step instead of only advancing from wherever it already was.
+          dueDate: addDaysToIso(todayIso(), daysToAdd),
           estimatedPomodoros: task.estimatedPomodoros,
           priority: task.priority,
           recurrence: task.recurrence,
