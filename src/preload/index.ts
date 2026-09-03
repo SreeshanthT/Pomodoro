@@ -19,6 +19,8 @@ const api = {
     update: (id: string, updates: TaskUpdate): Promise<Task | null> =>
       ipcRenderer.invoke('tasks:update', id, updates),
     delete: (id: string): Promise<void> => ipcRenderer.invoke('tasks:delete', id),
+    restore: (id: string): Promise<Task | null> => ipcRenderer.invoke('tasks:restore', id),
+    purge: (id: string): Promise<void> => ipcRenderer.invoke('tasks:purge', id),
     completeRecurring: (
       id: string,
       completedAt: string,

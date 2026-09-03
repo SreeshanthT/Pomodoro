@@ -13,6 +13,8 @@ interface TaskStore {
   toggleComplete: (id: string) => Promise<void>
   togglePriority: (id: string) => Promise<void>
   removeTask: (id: string) => Promise<Task | undefined>
+  restoreTask: (id: string) => Promise<void>
+  purgeTask: (id: string) => Promise<void>
   reorderTasks: (orderedIds: string[]) => Promise<void>
 }
 
@@ -96,6 +98,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     await get().updateTask(id, { priority: !task.priority })
   },
 
+  // Soft-deletes: the row survives (as `deleted`) until restoreTask undoes it or purgeTask removes it
+  // for good, so undo can bring back the exact same task instead of a re-created lookalike.
   removeTask: async (id) => {
     const task = get().tasks.find((t) => t.id === id)
     try {
@@ -106,6 +110,28 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       console.error('Failed to delete task', err)
       useToastStore.getState().pushError('Failed to delete task.')
       return undefined
+    }
+  },
+
+  restoreTask: async (id) => {
+    try {
+      const restored = await platform.tasks.restore(id)
+      if (!restored) return
+      set((state) => ({ tasks: [...state.tasks, restored] }))
+    } catch (err) {
+      console.error('Failed to restore task', err)
+      useToastStore.getState().pushError('Failed to restore task.')
+    }
+  },
+
+  // Permanently removes a task row. Used once a soft-delete's undo window has passed, and for
+  // deletes (e.g. bulk) that don't offer undo in the first place.
+  purgeTask: async (id) => {
+    try {
+      await platform.tasks.purge(id)
+      set((state) => ({ tasks: state.tasks.filter((t) => t.id !== id) }))
+    } catch (err) {
+      console.error('Failed to purge task', err)
     }
   },
 
