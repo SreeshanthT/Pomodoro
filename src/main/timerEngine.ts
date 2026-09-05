@@ -13,7 +13,7 @@ type CompleteListener = (event: SessionCompleteEvent) => void
  * clock: countdown displays (duration - elapsed), countup displays elapsed
  * directly and never auto-completes.
  */
-class TimerEngine {
+export class TimerEngine {
   private status: TimerStatus = 'idle'
   private phase: SessionPhase = 'work'
   private mode: TimerCountMode = 'countdown'
