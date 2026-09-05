@@ -5,6 +5,7 @@ import { DatabaseSync } from 'node:sqlite'
 import { randomUUID } from 'crypto'
 import type { FocusSession, NewProject, NewTask, Project, Settings, Task, TaskUpdate } from '@shared/types'
 import { DEFAULT_SETTINGS } from '@shared/types'
+import { log } from './logger'
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS tasks (
@@ -183,7 +184,7 @@ function migrateFromLegacyJson(): void {
       }
     })
   } catch (err) {
-    console.error('Failed to migrate legacy db.json into SQLite', err)
+    log.error('Failed to migrate legacy db.json into SQLite', err)
   }
 }
 

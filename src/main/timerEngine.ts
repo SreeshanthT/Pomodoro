@@ -1,4 +1,5 @@
 import { addFocusSession, getSettings, incrementCompletedPomodoro } from './db'
+import { log } from './logger'
 import type { SessionCompleteEvent, SessionPhase, TimerCountMode, TimerState, TimerStatus } from '@shared/types'
 
 type TickListener = (state: TimerState) => void
@@ -139,7 +140,7 @@ class TimerEngine {
 
   private tick(): void {
     if (this.mode === 'countdown' && this.computeElapsed() >= this.durationSeconds) {
-      void this.completeCurrentPhase().catch((err) => console.error('Failed to complete timer phase', err))
+      void this.completeCurrentPhase().catch((err) => log.error('Failed to complete timer phase', err))
     } else {
       this.emitTick()
     }
@@ -159,7 +160,7 @@ class TimerEngine {
           await incrementCompletedPomodoro(this.linkedTaskId)
         } catch (err) {
           // best-effort: session already advances even if the task was deleted mid-session
-          console.error('Failed to increment completed pomodoro count', err)
+          log.error('Failed to increment completed pomodoro count', err)
         }
       }
       try {
@@ -172,7 +173,7 @@ class TimerEngine {
         })
       } catch (err) {
         // best-effort: stats logging shouldn't block the timer from advancing
-        console.error('Failed to record focus session', err)
+        log.error('Failed to record focus session', err)
       }
     }
 
