@@ -1,5 +1,5 @@
-appId: com.pomodorotodo.app
-productName: PomodoroTodo
+appId: com.ekagram.app
+productName: Ekagram
 publish:
   provider: github
   owner: SreeshanthT
@@ -17,7 +17,7 @@ asarUnpack:
   - resources/**
 win:
   target: nsis
-  executableName: PomodoroTodo
+  executableName: Ekagram
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

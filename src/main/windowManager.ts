@@ -1,6 +1,7 @@
 import { join } from 'path'
 import { BrowserWindow, shell } from 'electron'
 import { is } from '@electron-toolkit/utils'
+import icon from '../../resources/icon.png?asset'
 
 let mainWindow: BrowserWindow | null = null
 let focusWindow: BrowserWindow | null = null
@@ -47,6 +48,7 @@ export function createMainWindow(): BrowserWindow {
     minHeight: 520,
     show: false,
     autoHideMenuBar: true,
+    icon,
     webPreferences: basePreferences
   })
 
@@ -91,6 +93,7 @@ export function openFocusWindow(): void {
     show: false,
     autoHideMenuBar: true,
     backgroundColor: '#000000',
+    icon,
     webPreferences: restrictedPreferences
   })
 
@@ -126,6 +129,7 @@ export function openMiniWindow(): void {
     transparent: true,
     backgroundColor: '#00000000',
     skipTaskbar: true,
+    icon,
     webPreferences: restrictedPreferences
   })
 

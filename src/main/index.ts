@@ -19,7 +19,7 @@ initLogger()
 crashReporter.start({ uploadToServer: false })
 
 app.whenReady().then(async () => {
-  electronApp.setAppUserModelId('com.pomodorotodo.app')
+  electronApp.setAppUserModelId('com.ekagram.app')
 
   app.on('browser-window-created', (_event, window) => {
     optimizer.watchWindowShortcuts(window)
@@ -43,8 +43,8 @@ app.whenReady().then(async () => {
       if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
     })
   } catch (error) {
-    log.error('PomodoroTodo failed to start:', error)
-    dialog.showErrorBox('PomodoroTodo failed to start', error instanceof Error ? error.message : String(error))
+    log.error('Ekagram failed to start:', error)
+    dialog.showErrorBox('Ekagram failed to start', error instanceof Error ? error.message : String(error))
     app.quit()
   }
 })

@@ -6,3 +6,5 @@ release
 .DS_Store
 .vscode/*
 !.vscode/extensions.json
+build/preview-*.png
+.mcp.json
