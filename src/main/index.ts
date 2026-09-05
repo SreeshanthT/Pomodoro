@@ -1,8 +1,9 @@
-import { app, BrowserWindow, dialog } from 'electron'
+import { app, BrowserWindow, crashReporter, dialog } from 'electron'
 import { electronApp, optimizer } from '@electron-toolkit/utils'
 import { createMainWindow } from './windowManager'
 import { initDb } from './db'
 import { timerEngine } from './timerEngine'
+import { initLogger, log } from './logger'
 import { registerTaskHandlers } from './ipc/taskHandlers'
 import { registerSettingsHandlers } from './ipc/settingsHandlers'
 import { registerTimerHandlers } from './ipc/timerHandlers'
@@ -10,6 +11,12 @@ import { registerSessionHandlers } from './ipc/sessionHandlers'
 import { registerWindowHandlers } from './ipc/windowHandlers'
 import { registerProjectHandlers } from './ipc/projectHandlers'
 import { registerBackupHandlers } from './ipc/backupHandlers'
+
+// As early as possible, before anything else can fail: persisted logging (so field failures are
+// diagnosable after the fact, not just visible in a terminal that's rarely attached in
+// production) plus local-only native crash dumps (no upload server - just written to disk).
+initLogger()
+crashReporter.start({ uploadToServer: false })
 
 app.whenReady().then(async () => {
   electronApp.setAppUserModelId('com.pomodorotodo.app')
@@ -36,7 +43,7 @@ app.whenReady().then(async () => {
       if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
     })
   } catch (error) {
-    console.error('PomodoroTodo failed to start:', error)
+    log.error('PomodoroTodo failed to start:', error)
     dialog.showErrorBox('PomodoroTodo failed to start', error instanceof Error ? error.message : String(error))
     app.quit()
   }
