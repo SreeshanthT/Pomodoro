@@ -6,8 +6,8 @@ import type { BackupResult } from '@shared/types'
 export function registerBackupHandlers(): void {
   ipcMain.handle('backup:export', async (): Promise<BackupResult> => {
     const { canceled, filePath } = await dialog.showSaveDialog({
-      title: 'Backup Pomodoro Todo data',
-      defaultPath: `pomodoro-todo-backup-${new Date().toISOString().slice(0, 10)}.sqlite`,
+      title: 'Backup Ekagram data',
+      defaultPath: `ekagram-backup-${new Date().toISOString().slice(0, 10)}.sqlite`,
       filters: [{ name: 'SQLite Database', extensions: ['sqlite'] }]
     })
     if (canceled || !filePath) return { success: false }
@@ -18,7 +18,7 @@ export function registerBackupHandlers(): void {
 
   ipcMain.handle('backup:import', async (): Promise<BackupResult> => {
     const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Restore Pomodoro Todo data',
+      title: 'Restore Ekagram data',
       filters: [{ name: 'SQLite Database', extensions: ['sqlite'] }],
       properties: ['openFile']
     })
@@ -27,7 +27,7 @@ export function registerBackupHandlers(): void {
     const source = filePaths[0]
     if (!existsSync(source)) return { success: false, error: 'Selected file no longer exists.' }
     if (!isValidBackupFile(source)) {
-      return { success: false, error: 'Selected file is not a valid Pomodoro Todo backup.' }
+      return { success: false, error: 'Selected file is not a valid Ekagram backup.' }
     }
 
     // Snapshot the current db before touching it, so a restore that turns out to be

@@ -1,6 +1,6 @@
-# Contributing to PomodoroTodo
+# Contributing to Ekagram
 
-Thanks for your interest in improving PomodoroTodo! This is an Electron + React + TypeScript desktop app.
+Thanks for your interest in improving Ekagram! This is an Electron + React + TypeScript desktop app.
 
 ## Getting set up
 

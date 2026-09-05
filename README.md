@@ -1,4 +1,4 @@
-# PomodoroTodo
+# Ekagram
 
 A desktop Pomodoro timer and to-do list, built with Electron, React, and TypeScript. Tasks and focus sessions live in a local SQLite database — no account, no cloud, no tracking.
 
@@ -36,7 +36,7 @@ _Coming soon — contributions welcome! See [Contributing](#contributing) if you
 
 Download the latest build for your platform from the [Releases page](https://github.com/SreeshanthT/Pomodoro/releases/latest):
 
-- **Windows** — `PomodoroTodo-<version>-setup.exe` (NSIS installer)
+- **Windows** — `ekagram-<version>-setup.exe` (NSIS installer)
 - **macOS** — `.dmg`
 
 Linux builds (AppImage) can be produced from source — see [Building](#building) below.

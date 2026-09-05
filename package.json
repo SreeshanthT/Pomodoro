@@ -1,7 +1,7 @@
 {
-  "name": "pomodoro-todo",
+  "name": "ekagram",
   "version": "0.1.0",
-  "description": "Pomodoro Timer + Todo desktop app",
+  "description": "Ekagram — a focused Pomodoro timer + todo desktop app",
   "main": "./out/main/index.js",
   "author": "Sreeshanth T",
   "license": "MIT",
@@ -26,7 +26,8 @@
     "start": "electron-vite preview",
     "build:win": "electron-vite build && electron-builder --win",
     "build:mac": "electron-vite build && electron-builder --mac",
-    "build:unpack": "electron-vite build && electron-builder --dir"
+    "build:unpack": "electron-vite build && electron-builder --dir",
+    "build:icons": "node build/rasterize.mjs"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.2",
@@ -44,8 +45,10 @@
     "electron": "^43.4.0",
     "electron-builder": "^26.15.3",
     "electron-vite": "^5.0.0",
+    "png-to-ico": "^3.0.2",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "sharp": "^0.35.4",
     "typescript": "^5.7.3",
     "vite": "^7.3.6",
     "vitest": "^4.1.10"
