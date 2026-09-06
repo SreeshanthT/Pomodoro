@@ -71,10 +71,7 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
   }, [settingsLoaded, loadSettings, tasksLoaded, loadTasks, sessionsLoaded, loadSessions])
 
   const todaySessions = useMemo(() => sessions.filter((s) => isToday(s.startedAt)), [sessions])
-  const todayFocusSeconds = useMemo(
-    () => todaySessions.reduce((sum, s) => sum + s.durationSeconds, 0),
-    [todaySessions]
-  )
+  const todayFocusSeconds = useMemo(() => todaySessions.reduce((sum, s) => sum + s.durationSeconds, 0), [todaySessions])
   const todayTasks = useMemo(() => groupTasksByDate(tasks.filter((t) => !t.completed)).today, [tasks])
 
   const colorVar =
@@ -90,7 +87,10 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
   const timeLabel = formatTime(state.displaySeconds)
 
   return (
-    <div className="screen screen-wide timer-screen timer-screen-dial" style={{ ['--phase-color' as string]: colorVar }}>
+    <div
+      className="screen screen-wide timer-screen timer-screen-dial"
+      style={{ ['--phase-color' as string]: colorVar }}
+    >
       <div
         className="timer-dial-bg"
         style={{ backgroundImage: `url("${DIAL_BACKGROUND_URLS[settings.dialBackground]}")` }}
@@ -135,7 +135,10 @@ export function TimerScreen({ onMinimize }: TimerScreenProps) {
             onTimerMode={() => setTimerModeOpen(true)}
             whiteNoiseOn={settings.ambientSound === 'white-noise'}
             onToggleWhiteNoise={() =>
-              saveSettings({ ...settings, ambientSound: settings.ambientSound === 'white-noise' ? 'none' : 'white-noise' })
+              saveSettings({
+                ...settings,
+                ambientSound: settings.ambientSound === 'white-noise' ? 'none' : 'white-noise'
+              })
             }
           />
         </div>

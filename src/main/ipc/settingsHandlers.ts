@@ -1,6 +1,13 @@
 import { ipcMain } from 'electron'
 import { getSettings, saveSettings } from '../db'
-import { DEFAULT_SETTINGS, type Settings, type SoundChoice, type ChimeChoice, type DialBackground, type TimerCountMode } from '@shared/types'
+import {
+  DEFAULT_SETTINGS,
+  type Settings,
+  type SoundChoice,
+  type ChimeChoice,
+  type DialBackground,
+  type TimerCountMode
+} from '@shared/types'
 
 // Mirrors the min/max already enforced by the settings UI's number inputs
 // (SettingsScreen.tsx) — re-checked here since IPC input can't be trusted to

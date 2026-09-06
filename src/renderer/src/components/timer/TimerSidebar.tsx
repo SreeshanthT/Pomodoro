@@ -25,7 +25,11 @@ export function TimerSidebar({ todayFocusSeconds, todaySessions, todayTasks, onT
           <ul className="sidebar-task-list">
             {todayTasks.slice(0, 5).map((task) => (
               <li key={task.id}>
-                <button className="sidebar-task-checkbox" onClick={() => onToggleTask(task.id)} aria-label="Toggle complete" />
+                <button
+                  className="sidebar-task-checkbox"
+                  onClick={() => onToggleTask(task.id)}
+                  aria-label="Toggle complete"
+                />
                 <span>{task.title}</span>
               </li>
             ))}

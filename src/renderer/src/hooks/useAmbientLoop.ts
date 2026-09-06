@@ -190,7 +190,6 @@ export function useAmbientLoop(url: string | null, options: UseAmbientLoopOption
       gainRef.current = null
       ctxRef.current = null
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -218,7 +217,6 @@ export function useAmbientLoop(url: string | null, options: UseAmbientLoopOption
   useEffect(() => {
     volumeRef.current = options.volume ?? 1
     rampGainTo(volumeRef.current)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options.volume])
 
   return {

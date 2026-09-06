@@ -40,7 +40,14 @@ export function MiniApp() {
     <div className="mini-widget" style={{ ['--phase-color' as string]: colorVar }}>
       <div className="mini-ring">
         <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
-          <circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth={STROKE} />
+          <circle
+            cx={SIZE / 2}
+            cy={SIZE / 2}
+            r={RADIUS}
+            fill="none"
+            stroke="rgba(255,255,255,0.15)"
+            strokeWidth={STROKE}
+          />
           <circle
             cx={SIZE / 2}
             cy={SIZE / 2}
@@ -58,7 +65,11 @@ export function MiniApp() {
       </div>
 
       <div className="mini-actions">
-        <button className="mini-btn" onClick={handlePlayPause} aria-label={state.status === 'running' ? 'Pause' : 'Play'}>
+        <button
+          className="mini-btn"
+          onClick={handlePlayPause}
+          aria-label={state.status === 'running' ? 'Pause' : 'Play'}
+        >
           {state.status === 'running' ? <PauseIcon /> : <PlayIcon />}
         </button>
         <button className="mini-btn" onClick={handleMaximize} aria-label="Maximize">

@@ -141,9 +141,7 @@ describe('completeCurrentPhase (via reaching the countdown target)', () => {
     engine.start('task-1')
     await vi.advanceTimersByTimeAsync(60_000) // completes a work phase
     await vi.waitFor(() => expect(incrementCompletedPomodoro).toHaveBeenCalledWith('task-1'))
-    expect(addFocusSession).toHaveBeenCalledWith(
-      expect.objectContaining({ taskId: 'task-1', durationSeconds: 60 })
-    )
+    expect(addFocusSession).toHaveBeenCalledWith(expect.objectContaining({ taskId: 'task-1', durationSeconds: 60 }))
 
     vi.mocked(incrementCompletedPomodoro).mockClear()
     vi.mocked(addFocusSession).mockClear()

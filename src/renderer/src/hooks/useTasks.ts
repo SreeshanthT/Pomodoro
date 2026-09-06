@@ -41,6 +41,9 @@ export function useTasks() {
       completed: [...completed].sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? ''))
     }
     return result
+    // currentDate isn't read in the body above - it's a deliberate invalidation trigger so this
+    // recomputes when the calendar date rolls over, not just when the task list changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks, currentDate])
 
   return { tasks, groups, loaded }

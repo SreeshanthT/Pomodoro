@@ -166,9 +166,7 @@ export class TimerEngine {
       try {
         await addFocusSession({
           taskId: this.linkedTaskId,
-          startedAt: new Date(
-            this.workPhaseStartedAt ?? Date.now() - completedDurationSeconds * 1000
-          ).toISOString(),
+          startedAt: new Date(this.workPhaseStartedAt ?? Date.now() - completedDurationSeconds * 1000).toISOString(),
           durationSeconds: completedDurationSeconds
         })
       } catch (err) {

@@ -17,14 +17,7 @@ export function TimerRing({ progress, color, softColor, label, sublabel }: Timer
   return (
     <div className="timer-ring" style={{ width: SIZE, height: SIZE }}>
       <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
-        <circle
-          cx={SIZE / 2}
-          cy={SIZE / 2}
-          r={RADIUS}
-          fill="none"
-          stroke={softColor}
-          strokeWidth={STROKE}
-        />
+        <circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} fill="none" stroke={softColor} strokeWidth={STROKE} />
         <circle
           cx={SIZE / 2}
           cy={SIZE / 2}

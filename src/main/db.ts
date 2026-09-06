@@ -176,11 +176,16 @@ function migrateFromLegacyJson(): void {
       const insertProject = db.prepare('INSERT INTO projects (id, name, color, createdAt) VALUES (?, ?, ?, ?)')
       for (const p of legacy.projects ?? []) insertProject.run(p.id, p.name, p.color, p.createdAt)
 
-      const insertSession = db.prepare('INSERT INTO sessions (id, taskId, startedAt, durationSeconds) VALUES (?, ?, ?, ?)')
+      const insertSession = db.prepare(
+        'INSERT INTO sessions (id, taskId, startedAt, durationSeconds) VALUES (?, ?, ?, ?)'
+      )
       for (const s of legacy.sessions ?? []) insertSession.run(s.id, s.taskId, s.startedAt, s.durationSeconds)
 
       if (legacy.settings) {
-        db.prepare('INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)').run('settings', JSON.stringify(legacy.settings))
+        db.prepare('INSERT OR REPLACE INTO kv (key, value) VALUES (?, ?)').run(
+          'settings',
+          JSON.stringify(legacy.settings)
+        )
       }
     })
   } catch (err) {
@@ -378,7 +383,12 @@ export function getProjects(): Project[] {
 }
 
 export async function createProject(input: NewProject): Promise<Project> {
-  const project: Project = { id: randomUUID(), name: input.name, color: input.color, createdAt: new Date().toISOString() }
+  const project: Project = {
+    id: randomUUID(),
+    name: input.name,
+    color: input.color,
+    createdAt: new Date().toISOString()
+  }
   db.prepare('INSERT INTO projects (id, name, color, createdAt) VALUES (?, ?, ?, ?)').run(
     project.id,
     project.name,
