@@ -96,9 +96,13 @@
   height: 15px;
   border-radius: 999px;
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 3px var(--work-soft);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 0 3px var(--work-soft);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .settings-slider-row input[type='range']:hover::-webkit-slider-thumb {
@@ -107,7 +111,9 @@
 
 .settings-slider-row input[type='range']:active::-webkit-slider-thumb {
   transform: scale(1.05);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 0 0 5px var(--work-soft);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45),
+    0 0 0 5px var(--work-soft);
 }
 
 .settings-bg-row {

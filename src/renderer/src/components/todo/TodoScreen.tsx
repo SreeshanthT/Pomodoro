@@ -241,7 +241,10 @@ export function TodoScreen() {
         />
 
         {showQuickAdd && (
-          <TaskQuickAdd groupLabel={activeProject ? activeProject.name : GROUP_LABEL[activeGroup]} onAdd={handleQuickAdd} />
+          <TaskQuickAdd
+            groupLabel={activeProject ? activeProject.name : GROUP_LABEL[activeGroup]}
+            onAdd={handleQuickAdd}
+          />
         )}
 
         <TaskList
@@ -260,7 +263,12 @@ export function TodoScreen() {
 
       {editingTask && <TaskForm task={editingTask} onSave={handleSave} onClose={closeForm} />}
 
-      <TaskBulkToolbar count={selectedIds.size} onComplete={handleBulkComplete} onDelete={handleBulkDelete} onCancel={exitSelectMode} />
+      <TaskBulkToolbar
+        count={selectedIds.size}
+        onComplete={handleBulkComplete}
+        onDelete={handleBulkDelete}
+        onCancel={exitSelectMode}
+      />
 
       {undoTask && <UndoToast message={`"${undoTask.title}" deleted`} onUndo={handleUndo} />}
     </div>

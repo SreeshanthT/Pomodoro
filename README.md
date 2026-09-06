@@ -10,6 +10,7 @@ A desktop Pomodoro timer and to-do list, built with Electron, React, and TypeScr
 ## Features
 
 **Timer**
+
 - Classic Pomodoro flow — work sessions, short breaks, and long breaks with a configurable cadence.
 - Switch between countdown (work toward a set duration) and count-up (run until you stop) modes.
 - Timestamp-based engine that runs in the main process, so the clock stays accurate even when a window is minimized, hidden, or the OS throttles background timers.
@@ -19,12 +20,14 @@ A desktop Pomodoro timer and to-do list, built with Electron, React, and TypeScr
 - A frameless, always-on-top **mini widget** for glanceable progress while you work in other apps, plus a dedicated **focus window** for a distraction-free full view. Opening one automatically closes the other.
 
 **Tasks**
+
 - Today / Tomorrow / This Week / Planned views, bucketed automatically from each task's due date — overdue tasks surface under Today so nothing gets lost.
 - Subtasks, priority flagging, manual reordering, and projects (with color labels) to group related work.
 - Daily and weekly recurring tasks — completing one auto-creates the next occurrence.
 - Bulk actions for multi-select edits, quick-add for fast capture, and a focus-time stats bar backed by logged sessions.
 
 **Data**
+
 - Everything is stored locally in SQLite — nothing leaves your machine.
 - One-click backup/export and restore/import of the database file, from Settings.
 
@@ -54,13 +57,13 @@ npm run dev
 
 ### Useful scripts
 
-| Script | Description |
-| --- | --- |
-| `npm run dev` | Run the app in development mode with hot reload |
-| `npm run typecheck` | Type-check both the main and renderer projects |
-| `npm test` | Run the unit test suite (Vitest) |
-| `npm run build` | Build the renderer and main process for production |
-| `npm start` | Preview a production build |
+| Script              | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| `npm run dev`       | Run the app in development mode with hot reload    |
+| `npm run typecheck` | Type-check both the main and renderer projects     |
+| `npm test`          | Run the unit test suite (Vitest)                   |
+| `npm run build`     | Build the renderer and main process for production |
+| `npm start`         | Preview a production build                         |
 
 ## Building
 

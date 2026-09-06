@@ -33,7 +33,12 @@ export function FocusApp() {
       <div className="focus-titlebar">
         <span className="focus-phase-label">{PHASE_LABEL[state.phase]}</span>
         <div className="focus-titlebar-actions">
-          <button className="focus-icon-btn" onClick={handleCollapse} aria-label="Collapse to mini widget" title="Collapse to mini widget">
+          <button
+            className="focus-icon-btn"
+            onClick={handleCollapse}
+            aria-label="Collapse to mini widget"
+            title="Collapse to mini widget"
+          >
             <CollapseIcon />
           </button>
           <button className="focus-icon-btn" onClick={() => window.close()} aria-label="Close" title="Close">
@@ -45,7 +50,11 @@ export function FocusApp() {
       <div className="focus-center">
         <TimerFlipClock totalSeconds={state.displaySeconds} />
 
-        <button className="focus-play-pause" onClick={handlePlayPause} aria-label={state.status === 'running' ? 'Pause' : 'Play'}>
+        <button
+          className="focus-play-pause"
+          onClick={handlePlayPause}
+          aria-label={state.status === 'running' ? 'Pause' : 'Play'}
+        >
           {state.status === 'running' ? <PauseIcon /> : <PlayIcon />}
         </button>
       </div>

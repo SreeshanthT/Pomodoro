@@ -35,7 +35,12 @@ export function Select<T extends string>({ value, options, onChange }: SelectPro
 
   return (
     <div className="select">
-      <button type="button" className={`select-trigger${open ? ' open' : ''}`} onClick={handleToggle} onBlur={handleBlur}>
+      <button
+        type="button"
+        className={`select-trigger${open ? ' open' : ''}`}
+        onClick={handleToggle}
+        onBlur={handleBlur}
+      >
         <span>{selected?.label ?? ''}</span>
         <ChevronDownIcon className="select-chevron" />
       </button>

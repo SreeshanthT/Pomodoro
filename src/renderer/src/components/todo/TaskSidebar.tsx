@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import type { Project, TaskGroup } from '@shared/types'
-import {
-  CalendarIcon,
-  CheckCircleIcon,
-  InboxIcon,
-  PlusIcon,
-  SearchIcon,
-  SunIcon,
-  TrashIcon
-} from '../shared/icons'
+import { CalendarIcon, CheckCircleIcon, InboxIcon, PlusIcon, SearchIcon, SunIcon, TrashIcon } from '../shared/icons'
 
 const VIEWS: { key: TaskGroup; label: string; Icon: typeof SunIcon }[] = [
   { key: 'today', label: 'Today', Icon: SunIcon },
@@ -66,12 +58,7 @@ export function TaskSidebar({
     <aside className="task-sidebar">
       <div className="task-sidebar-search">
         <SearchIcon />
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-        />
+        <input type="text" placeholder="Search" value={searchQuery} onChange={(e) => onSearchChange(e.target.value)} />
       </div>
 
       <nav className="task-sidebar-nav">
@@ -94,12 +81,19 @@ export function TaskSidebar({
       <div className="task-sidebar-projects">
         <span className="task-sidebar-heading">Projects</span>
         {projects.map((project) => (
-          <div key={project.id} className={`task-sidebar-item task-sidebar-project${activeProjectId === project.id ? ' active' : ''}`}>
+          <div
+            key={project.id}
+            className={`task-sidebar-item task-sidebar-project${activeProjectId === project.id ? ' active' : ''}`}
+          >
             <button className="task-sidebar-project-btn" onClick={() => onSelectProject(project.id)}>
               <span className="task-sidebar-dot" style={{ background: project.color }} />
               <span>{project.name}</span>
             </button>
-            <button className="task-sidebar-project-delete" onClick={() => onDeleteProject(project.id)} aria-label={`Delete ${project.name}`}>
+            <button
+              className="task-sidebar-project-delete"
+              onClick={() => onDeleteProject(project.id)}
+              aria-label={`Delete ${project.name}`}
+            >
               <TrashIcon />
             </button>
           </div>

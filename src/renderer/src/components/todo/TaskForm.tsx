@@ -100,7 +100,11 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
 
         <div className="task-form-row">
           <div className="task-form-quick-dates">
-            <button type="button" className={dueDate === todayIso() ? 'active' : ''} onClick={() => setDueDate(todayIso())}>
+            <button
+              type="button"
+              className={dueDate === todayIso() ? 'active' : ''}
+              onClick={() => setDueDate(todayIso())}
+            >
               Today
             </button>
             <button
@@ -111,12 +115,7 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               Tomorrow
             </button>
           </div>
-          <input
-            type="date"
-            className="task-form-date"
-            value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
-          />
+          <input type="date" className="task-form-date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
         </div>
 
         <label className="task-form-pomodoro-label">
@@ -184,7 +183,14 @@ export function TaskForm({ task, onSave, onClose }: TaskFormProps) {
               .slice(0, 5)
               .map((session) => (
                 <div key={session.id} className="task-form-session-row">
-                  <span>{new Date(session.startedAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                  <span>
+                    {new Date(session.startedAt).toLocaleString([], {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
+                  </span>
                   <span>{formatFocusDuration(session.durationSeconds)}</span>
                 </div>
               ))}

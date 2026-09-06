@@ -16,8 +16,7 @@ const api = {
   tasks: {
     getAll: (): Promise<Task[]> => ipcRenderer.invoke('tasks:getAll'),
     create: (input: NewTask): Promise<Task> => ipcRenderer.invoke('tasks:create', input),
-    update: (id: string, updates: TaskUpdate): Promise<Task | null> =>
-      ipcRenderer.invoke('tasks:update', id, updates),
+    update: (id: string, updates: TaskUpdate): Promise<Task | null> => ipcRenderer.invoke('tasks:update', id, updates),
     delete: (id: string): Promise<void> => ipcRenderer.invoke('tasks:delete', id),
     restore: (id: string): Promise<Task | null> => ipcRenderer.invoke('tasks:restore', id),
     purge: (id: string): Promise<void> => ipcRenderer.invoke('tasks:purge', id),
@@ -61,8 +60,7 @@ const api = {
       return () => ipcRenderer.removeListener('timer:tick', listener)
     },
     onSessionComplete: (callback: (event: SessionCompleteEvent) => void): (() => void) => {
-      const listener = (_event: Electron.IpcRendererEvent, payload: SessionCompleteEvent): void =>
-        callback(payload)
+      const listener = (_event: Electron.IpcRendererEvent, payload: SessionCompleteEvent): void => callback(payload)
       ipcRenderer.on('timer:sessionComplete', listener)
       return () => ipcRenderer.removeListener('timer:sessionComplete', listener)
     }

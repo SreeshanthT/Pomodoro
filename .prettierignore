@@ -1,0 +1,10 @@
+node_modules
+out
+release
+dist
+build/icon*.ico
+build/icon*.png
+resources/icon.png
+src/renderer/public
+branding
+package-lock.json

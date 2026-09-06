@@ -61,7 +61,11 @@ describe('tasks CRUD', () => {
 
   it('updateTask patches only the given fields and returns the full updated row', async () => {
     const task = await db.createTask({ title: 'A', dueDate: '2026-01-01' })
-    const updated = await db.updateTask(task.id, { title: 'B', completed: true, completedAt: '2026-01-02T00:00:00.000Z' })
+    const updated = await db.updateTask(task.id, {
+      title: 'B',
+      completed: true,
+      completedAt: '2026-01-02T00:00:00.000Z'
+    })
     expect(updated).toMatchObject({ id: task.id, title: 'B', completed: true, completedAt: '2026-01-02T00:00:00.000Z' })
     // untouched fields survive the patch
     expect(updated?.dueDate).toBe('2026-01-01')
@@ -125,7 +129,11 @@ describe('completeRecurringTask', () => {
       recurrence: 'daily'
     })
 
-    expect(result?.completedTask).toMatchObject({ id: task.id, completed: true, completedAt: '2026-01-01T09:00:00.000Z' })
+    expect(result?.completedTask).toMatchObject({
+      id: task.id,
+      completed: true,
+      completedAt: '2026-01-01T09:00:00.000Z'
+    })
     expect(result?.nextTask).toMatchObject({ completed: false, dueDate: '2026-01-02', recurrence: 'daily' })
     expect(result?.nextTask.id).not.toBe(task.id)
 
@@ -178,7 +186,11 @@ describe('settings', () => {
 
 describe('sessions', () => {
   it('addFocusSession/getSessions round-trip', async () => {
-    const session = await db.addFocusSession({ taskId: null, startedAt: '2026-01-01T09:00:00.000Z', durationSeconds: 1500 })
+    const session = await db.addFocusSession({
+      taskId: null,
+      startedAt: '2026-01-01T09:00:00.000Z',
+      durationSeconds: 1500
+    })
     expect(db.getSessions()).toEqual([session])
   })
 })
@@ -186,7 +198,9 @@ describe('sessions', () => {
 describe('schema migration', () => {
   it('a brand-new db is stamped at the latest schema version without re-running migrations', async () => {
     // initDb() already ran once in beforeEach against a fresh dir; read user_version directly.
-    const raw = new DatabaseSync(join(vi.mocked(app.getPath).mock.results.at(-1)!.value, 'data.sqlite'), { readOnly: true })
+    const raw = new DatabaseSync(join(vi.mocked(app.getPath).mock.results.at(-1)!.value, 'data.sqlite'), {
+      readOnly: true
+    })
     const { user_version: version } = raw.prepare('PRAGMA user_version').get() as { user_version: number }
     raw.close()
     expect(version).toBeGreaterThan(0)
@@ -210,10 +224,27 @@ describe('schema migration', () => {
       CREATE TABLE sessions (id TEXT PRIMARY KEY, taskId TEXT, startedAt TEXT NOT NULL, durationSeconds INTEGER NOT NULL);
       CREATE TABLE kv (key TEXT PRIMARY KEY, value TEXT NOT NULL);
     `)
-    legacy.prepare(
-      `INSERT INTO tasks (id, title, notes, dueDate, completed, createdAt, completedAt, estimatedPomodoros, completedPomodoros, priority, subtasks, recurrence, projectId, "order")
+    legacy
+      .prepare(
+        `INSERT INTO tasks (id, title, notes, dueDate, completed, createdAt, completedAt, estimatedPomodoros, completedPomodoros, priority, subtasks, recurrence, projectId, "order")
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).run('legacy-1', 'Pre-existing task', null, '2026-01-01', 0, '2026-01-01T00:00:00.000Z', null, 1, 0, 0, '[]', null, null, 0)
+      )
+      .run(
+        'legacy-1',
+        'Pre-existing task',
+        null,
+        '2026-01-01',
+        0,
+        '2026-01-01T00:00:00.000Z',
+        null,
+        1,
+        0,
+        0,
+        '[]',
+        null,
+        null,
+        0
+      )
     legacy.close()
 
     await db.initDb()
@@ -237,7 +268,9 @@ describe('schema migration', () => {
     // Simulate an app restart against the same db file: re-run initDb without wiping the directory.
     await db.initDb()
 
-    const raw = new DatabaseSync(join(vi.mocked(app.getPath).mock.results.at(-1)!.value, 'data.sqlite'), { readOnly: true })
+    const raw = new DatabaseSync(join(vi.mocked(app.getPath).mock.results.at(-1)!.value, 'data.sqlite'), {
+      readOnly: true
+    })
     const remaining = raw.prepare('SELECT COUNT(*) as c FROM tasks').get() as { c: number }
     raw.close()
     expect(remaining.c).toBe(0)

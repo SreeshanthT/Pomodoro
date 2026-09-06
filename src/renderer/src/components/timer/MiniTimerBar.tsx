@@ -56,7 +56,14 @@ export function MiniTimerBar({ onExpand }: MiniTimerBarProps) {
       <button className="mini-timer-bar-main" onClick={onExpand} aria-label="Expand timer">
         <span className="mini-timer-bar-ring">
           <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
-            <circle cx={SIZE / 2} cy={SIZE / 2} r={RADIUS} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth={STROKE} />
+            <circle
+              cx={SIZE / 2}
+              cy={SIZE / 2}
+              r={RADIUS}
+              fill="none"
+              stroke="rgba(255,255,255,0.15)"
+              strokeWidth={STROKE}
+            />
             <circle
               cx={SIZE / 2}
               cy={SIZE / 2}
@@ -76,7 +83,11 @@ export function MiniTimerBar({ onExpand }: MiniTimerBarProps) {
       </button>
 
       {state.status !== 'idle' && (
-        <button className="mini-timer-bar-play" onClick={handlePlayPause} aria-label={state.status === 'running' ? 'Pause' : 'Resume'}>
+        <button
+          className="mini-timer-bar-play"
+          onClick={handlePlayPause}
+          aria-label={state.status === 'running' ? 'Pause' : 'Resume'}
+        >
           {state.status === 'running' ? <PauseIcon /> : <PlayIcon />}
         </button>
       )}
